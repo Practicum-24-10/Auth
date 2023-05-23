@@ -60,6 +60,6 @@ services:
 
 volumes:
     pg_volume:
-      name: pg_volume
+      name: pg_volume_auth
     redis_volume:
-      name: redis_volume
+      name: redis_volume_auth
