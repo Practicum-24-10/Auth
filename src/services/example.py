@@ -1,5 +1,5 @@
 from typing import List
-from src.models.example import User
+from src.models.users import User
 
 
 class UsersService:
