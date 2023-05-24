@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 
-from src.models.example import User
+from src.models.users import User
 from src.services.example import UsersService
 
 api_bp = Blueprint('api', __name__)
