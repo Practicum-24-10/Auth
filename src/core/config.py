@@ -1,21 +1,20 @@
-# import os
-# from logging import config as logging_config
+import os
 
-# import dotenv
-# from pydantic import BaseSettings
-
-# from src.core.logger import LOGGING
-
-# logging_config.dictConfig(LOGGING)
-# dotenv.load_dotenv()
+import dotenv
+from pydantic import BaseSettings
 
 
-# class AppSettings(BaseSettings):
-#     project_name: str = "Some project name"
-#     redis_host: str = "localhost"
-#     redis_port: int = 6379
-#     es_host: str = "http://localhost"
-#     es_port: int = 9200
+dotenv.load_dotenv()
 
 
-# BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+class AppSettings(BaseSettings):
+    db_name: str = 'db_name'
+    db_user: str = 'db_user'
+    db_password: str = 'db_password'
+    db_host: str = 'db_host'
+    db_port: int = 5432
+    redis_host: str = "localhost"
+    redis_port: int = 6379
+    loglevel: str = 'INFO'
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
