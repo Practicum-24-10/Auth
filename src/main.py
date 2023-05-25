@@ -10,7 +10,7 @@ init_db(app)
 with app.app_context():
     db.create_all()
 
-app.register_blueprint(roles_bp, url_prefix='/auth/api/v1/')
+app.register_blueprint(roles_bp, url_prefix='/api/v1/roles/')
 
 
 if __name__ == '__main__':
