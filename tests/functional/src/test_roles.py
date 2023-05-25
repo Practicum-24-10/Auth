@@ -16,11 +16,11 @@ import pytest
 async def test_add_role(
     make_post_request, make_delete_request, query_data, expected_answer
 ):
-    response = await make_post_request("/create_role", query_data)
+    response = await make_post_request("/roles/create", query_data)
     assert response["status"] == expected_answer["status"]
     assert response["body"] == expected_answer["body"]
     role_name = query_data["name"]
-    await make_delete_request(f"/delete_role/{role_name}")
+    await make_delete_request(f"/roles/delete/{role_name}")
 
 
 @pytest.mark.parametrize(
@@ -39,8 +39,8 @@ async def test_add_role(
 async def test_delete_role(
     make_post_request, make_delete_request, query_data, expected_answer
 ):
-    await make_post_request("/create_role", query_data)
+    await make_post_request("/roles/create", query_data)
     role_name = query_data["name"]
-    response = await make_delete_request(f"/delete_role/{role_name}")
+    response = await make_delete_request(f"/roles/delete/{role_name}")
     assert response["status"] == expected_answer["status"]
     assert response["body"] == expected_answer["body"]
