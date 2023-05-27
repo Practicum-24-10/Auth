@@ -1,7 +1,7 @@
+from src.models.mixin import Mixin
+from src.db.postgres_db import db
 from sqlalchemy.dialects.postgresql import UUID
 
-from src.db.postgres_db import db
-from src.models.mixin import Mixin
 
 # UsersRole = db.Table('users_roles',
 #                      db.Column('user_id', UUID(as_uuid=True),
@@ -13,34 +13,31 @@ from src.models.mixin import Mixin
 # class UsersRole:
 #     __tablename__ = 'roles_permissions'
 
-
 class UsersRole(db.Model):
-    __tablename__ = "users_roles"
+    __tablename__ = 'users_roles'
 
-    user_id = db.Column(UUID(as_uuid=True), db.ForeignKey("users.id"), primary_key=True)
-    role_id = db.Column(UUID(as_uuid=True), db.ForeignKey("roles.id"), primary_key=True)
+    user_id = db.Column(UUID(as_uuid=True),
+                        db.ForeignKey('users.id'),
+                        primary_key=True)
+    role_id = db.Column(UUID(as_uuid=True), db.ForeignKey('roles.id'),
+                        primary_key=True)
 
 
 class Role(Mixin):
-    __tablename__ = "roles"
+    __tablename__ = 'roles'
 
     name = db.Column(db.String, unique=True, nullable=False)
-    users = db.relationship(
-        "User", secondary="users_roles", overlaps="roles,users_relation"
-    )
-    permissions = db.relationship(
-        "Permission",
-        secondary="roles_permissions",
-        overlaps="permissions,roles_relation",
-    )
+    users = db.relationship('User', secondary='users_roles',
+                            overlaps="roles,users_relation")
+    permissions = db.relationship('Permission', secondary='roles_permissions',
+                                  overlaps="permissions,roles_relation")
 
     # permissions_relation = db.relationship('Permission',
     #                                        secondary=RolesPermissions,
     #                                        backref='roles')
 
     def __repr__(self):
-        return f"<Role {self.name}>"
-
+        return f'<Role {self.name}>'
 
 # class UsersRole(db.Model):
 #     __tablename__ = 'users_roles'

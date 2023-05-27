@@ -7,8 +7,8 @@ import pytest
     "query_data, expected_answer",
     [
         (
-            {"name": "Admin5"},
-            {"status": HTTPStatus.OK, "body": {"message": "Role created successfully"}},
+            {"name": "Admin75fg55f7"},
+            {"status": HTTPStatus.CREATED, "name": "Admin75fg55f7"},
         ),
     ],
 )
@@ -18,19 +18,19 @@ async def test_add_role(
 ):
     response = await make_post_request("/roles/create", query_data)
     assert response["status"] == expected_answer["status"]
-    assert response["body"] == expected_answer["body"]
-    role_name = query_data["name"]
-    await make_delete_request(f"/roles/delete/{role_name}")
+    assert response['body']["name"] == expected_answer["name"]
+    role_id = response['body']["id"]
+    await make_delete_request(f"/roles/delete/{role_id}")
 
 
 @pytest.mark.parametrize(
     "query_data, expected_answer",
     [
         (
-            {"name": "Admin12"},
+            {"name": "Admin66fdcdsv6"},
             {
-                "status": HTTPStatus.OK,
-                "body": {"message": "The Admin12 role has been successfully deleted"},
+                "status": HTTPStatus.ACCEPTED,
+                "body": {"message": "Role deleted successfully"},
             },
         ),
     ],
@@ -39,8 +39,8 @@ async def test_add_role(
 async def test_delete_role(
     make_post_request, make_delete_request, query_data, expected_answer
 ):
-    await make_post_request("/roles/create", query_data)
-    role_name = query_data["name"]
-    response = await make_delete_request(f"/roles/delete/{role_name}")
+    response = await make_post_request("/roles/create", query_data)
+    role_id = response["body"]["id"]
+    response = await make_delete_request(f"/roles/delete/{role_id}")
     assert response["status"] == expected_answer["status"]
     assert response["body"] == expected_answer["body"]
