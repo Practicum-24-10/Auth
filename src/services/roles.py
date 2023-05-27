@@ -1,5 +1,5 @@
-from src.models.roles import Role
 from src.db.postgres_db import db
+from src.models.roles import Role
 
 
 class RoleService:
