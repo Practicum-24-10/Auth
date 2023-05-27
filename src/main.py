@@ -1,5 +1,6 @@
 from flask import Flask
 from src.api.v1.roles import roles_bp
+from src.api.v1.users import users_bp
 from src.db.postgres_db import init_db, db
 
 
@@ -11,6 +12,7 @@ with app.app_context():
     db.create_all()
 
 app.register_blueprint(roles_bp, url_prefix='/api/v1/roles/')
+app.register_blueprint(users_bp, url_prefix='/api/v1/users/')
 
 
 if __name__ == '__main__':
