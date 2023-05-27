@@ -9,15 +9,19 @@ class RoleService:
         db.session.commit()
 
     @classmethod
-    def delete_role(cls, name: str):
-        role = Role.query.filter_by(name=name).first()
-        if role:
-            db.session.delete(role)
-            db.session.commit()
-            return f"The {name} role has been successfully deleted"
-        else:
-            return f"Role {name} does not exist"
+    def get_role(cls, id):
+        return Role.query.get_or_404(id)
 
     @classmethod
-    def get_role(cls, name):
-        return Role.query.filter_by(name=name).first()
+    def update_role(cls, role: Role, name: str):
+        role.name = name
+        db.session.commit()
+
+    @classmethod
+    def delete_role(cls, role):
+        db.session.delete(role)
+        db.session.commit()
+
+    @classmethod
+    def get_all(cls):
+        return Role.query.all()
