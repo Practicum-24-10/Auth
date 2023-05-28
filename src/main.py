@@ -2,7 +2,7 @@ from flask import Flask
 
 from src.api.v1.auth import users_api_bp
 from src.api.v1.roles import roles_bp
-from src.api.v1.users import users_bp
+from src.api.v1.users_role import users_bp
 from src.db.jwt import init_jwt
 from src.db.postgres_db import db, init_db
 from src.db.redis_db import init_redis
