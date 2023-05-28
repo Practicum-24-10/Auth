@@ -4,7 +4,7 @@ from flask import Request
 
 from src.db.postgres_db import db
 from src.models.history import History
-from src.schemas.users_schemas import HistorySchema
+from src.schemas.history_shema import HistorySchema
 
 
 class HistoryService:
