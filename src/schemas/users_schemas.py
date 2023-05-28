@@ -28,12 +28,3 @@ class SignupSchema(Schema):
     password = fields.String(
         attribute="password", required=True, validate=Length(min=6, max=100)
     )
-
-
-class HistorySchema(Schema):
-    username = fields.String(
-        attribute="username", required=True, validate=Length(min=1, max=100)
-    )
-    password = fields.String(
-        attribute="password", required=True, validate=Length(min=6, max=100)
-    )
