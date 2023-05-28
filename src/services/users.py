@@ -13,7 +13,7 @@ class UserService:
 
     @classmethod
     def is_data_exists(cls, data: dict) -> bool:
-        search_user = User.query.filter_by(username=data['username']).first()
+        search_user = User.query.filter_by(username=data["username"]).first()
         if search_user is not None:
             return True
         return False
@@ -35,12 +35,16 @@ class UserService:
             change_user.username = data["username"]
         if data["password"] is not None:
             change_user.set_password(data["password"])
+
         db.session.add(change_user)
         db.session.commit()
 
     @classmethod
     def check_change(cls, data: dict):
-        if data["username"] is None and data["password"] is None:
+        try:
+            if data["username"] is None and data["password"] is None:
+                return False
+        except KeyError:
             return False
         return True
 

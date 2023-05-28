@@ -1,30 +1,36 @@
 from datetime import timedelta
+from functools import wraps
 from http import HTTPStatus
 
-from flask import Flask, make_response
-from flask_jwt_extended import JWTManager
+from flask import Flask
+from flask_jwt_extended import JWTManager, get_jwt
 
 from src.services.redis_servis import redis_service
 
 jwt = JWTManager()
 
 
-@jwt.token_in_blocklist_loader
-def check_if_token_is_revoked(jwt_header, jwt_payload: dict):
-    jti = jwt_payload["jti"]
-    user_id = jwt_payload["sub"]
-    token_pr_id = jwt_payload["pr_uuid"]
-    if redis_service.is_token_in_blacklist(jti):
-        return make_response(
-            {"message": "Access denied. Token has been revoked."},
-            HTTPStatus.UNAUTHORIZED,
-        )
-    if not redis_service.check_protection_id(user_id, token_pr_id):
-        return make_response(
-            {"message": "Access denied. Token has been revoked."},
-            HTTPStatus.UNAUTHORIZED,
-        )
-    return False
+def check_if_token_is_revoked():
+    def func_wrapper(func):
+        @wraps(func)
+        def inner(*args, **kwargs):
+            jwt_payload = get_jwt()
+            jti = jwt_payload["jti"]
+            user_id = jwt_payload["sub"]
+            token_pr_id = jwt_payload["pr_uuid"]
+            if redis_service.is_token_in_blacklist(jti):
+                return {
+                    "message": "Access denied. Token has been revoked."
+                }, HTTPStatus.UNAUTHORIZED
+            if not redis_service.check_protection_id(user_id, token_pr_id):
+                return {
+                    "message": "Access denied. Token has been revoked."
+                }, HTTPStatus.UNAUTHORIZED
+            return func(*args, **kwargs)
+
+        return inner
+
+    return func_wrapper
 
 
 def init_jwt(app: Flask):

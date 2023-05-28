@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from werkzeug.security import check_password_hash, generate_password_hash
 
 from src.db.postgres_db import db
@@ -14,9 +16,11 @@ class User(Mixin):
     is_superuser = db.Column(db.BOOLEAN(), default=False)
     is_active = db.Column(db.BOOLEAN(), default=True)
 
-    def __init__(self, username, password):
+    def __init__(self, username: str, password: str, id: UUID = None):
         self.username = username
         self.set_password(password)
+        if id is not None:
+            self.id = id
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
@@ -25,4 +29,4 @@ class User(Mixin):
         return check_password_hash(self.password, password)
 
     def __repr__(self):
-        return f"<User {self.login}>"
+        return f"<User {self.username}>"
