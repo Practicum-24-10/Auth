@@ -1,5 +1,4 @@
 import logging
-
 from src.core.config import config
 
 
@@ -8,8 +7,7 @@ class ModuleNameFormatter(logging.Formatter):
         record.module_name = record.name
         return super().format(record)
 
-
-LOG_FORMAT = "%(asctime)s - %(levelname)s - %(module_name)s - %(message)s"
+LOG_FORMAT = '%(asctime)s - %(levelname)s - %(module_name)s - %(message)s'
 formatter = ModuleNameFormatter(LOG_FORMAT)
 
 handler = logging.StreamHandler()

@@ -1,7 +1,13 @@
+from datetime import timedelta
 from uuid import UUID, uuid4
 
-from flask import Request
-from flask_jwt_extended import create_access_token, create_refresh_token
+from flask import make_response, Request
+from flask_jwt_extended import (JWTManager, create_access_token,
+                                create_refresh_token, get_jwt,
+                                get_jwt_identity, verify_jwt_in_request)
+from werkzeug.local import LocalProxy
+
+from src.core.config import token_life
 from src.db.redis_db import redis_client
 from src.models.users import User
 

@@ -6,13 +6,12 @@ from flask_jwt_extended import (decode_token, get_jwt, get_jwt_identity,
 from jwt import DecodeError
 from marshmallow import ValidationError
 
-from src.db.jwt import check_if_token_is_revoked
 from src.schemas.users_schemas import (ChangeSchema, LoginSchema, LogoutSchema,
                                        SignupSchema)
-from src.services.history import history_service
 from src.services.redis_servis import redis_service
-from src.services.users import user_service
 from src.services.utils import generate_tokens
+from src.services.users import user_service
+from src.services.history import history_service
 
 users_api_bp = Blueprint("api", __name__, url_prefix="/api/v1/auth")
 
@@ -33,10 +32,8 @@ def signup():
             {"message": "This login already exists"}, HTTPStatus.BAD_REQUEST
         )
     user_service.add_user(data)
-    return make_response(
-        {"message": "New account was registered"},
-        HTTPStatus.OK
-    )
+    return make_response({"message": "New account was registered"},
+                         HTTPStatus.OK)
 
 
 @users_api_bp.route("/login", methods=["POST"])
@@ -70,7 +67,6 @@ def login():
 
 @users_api_bp.route("/refresh", methods=["POST"])
 @jwt_required(refresh=True)
-@check_if_token_is_revoked()
 def refresh():
     user_id = get_jwt_identity()
     old_token = get_jwt()["jti"]
@@ -78,10 +74,8 @@ def refresh():
     try:
         access_token, refresh_token = generate_tokens(user_id, request)
     except ValueError:
-        return make_response(
-            {"message": "Access denied."},
-            HTTPStatus.UNAUTHORIZED
-        )
+        return make_response({"message": "Access denied."},
+                             HTTPStatus.UNAUTHORIZED)
 
     return make_response(
         {
@@ -95,7 +89,6 @@ def refresh():
 
 @users_api_bp.route("/logout", methods=["POST"])
 @jwt_required()
-@check_if_token_is_revoked()
 def logout():
     user_id = get_jwt()["sub"]
     try:
@@ -129,7 +122,6 @@ def logout():
 
 @users_api_bp.route("/change", methods=["POST"])
 @jwt_required()
-@check_if_token_is_revoked()
 def change():
     try:
         data = ChangeSchema().load(request.json)
@@ -163,7 +155,6 @@ def change():
 
 @users_api_bp.route("/history", methods=["GET"])
 @jwt_required()
-@check_if_token_is_revoked()
 def history():
     user_id = get_jwt()["sub"]
     user_history = history_service.get_user_history(user_id)
@@ -175,6 +166,9 @@ def history():
             HTTPStatus.NOT_FOUND,
         )
     return make_response(
-        {"message": "Login history", "history": user_history},
+        {
+            "message": "login history",
+            "history": user_history
+        },
         HTTPStatus.OK,
     )
