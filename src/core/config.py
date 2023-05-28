@@ -1,4 +1,5 @@
 import os
+from datetime import timedelta
 
 import dotenv
 from pydantic import BaseSettings
@@ -20,6 +21,8 @@ class AppSettings(BaseSettings):
 class TokensLife(BaseSettings):
     access: int = 100
     refresh: int = 10000
+    delta_refresh: timedelta = timedelta(days=30)
+    delta_access: timedelta = timedelta(hours=1)
 
 
 token_life = TokensLife()
