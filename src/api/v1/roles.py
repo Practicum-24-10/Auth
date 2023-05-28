@@ -2,7 +2,7 @@ from typing import Any
 
 from flask import Blueprint, request
 from marshmallow import Schema, fields, validate
-from werkzeug.exceptions import HTTPException, NotFound
+from werkzeug.exceptions import NotFound
 
 from src.core.logger import logger
 from src.models.roles import Role
@@ -12,6 +12,7 @@ roles_bp = Blueprint("roles", __name__)
 
 
 class RoleSchema(Schema):
+    id = fields.String(required=True, validate=validate.Length(1, 128))
     name = fields.String(required=True, validate=validate.Length(1, 128))
 
 

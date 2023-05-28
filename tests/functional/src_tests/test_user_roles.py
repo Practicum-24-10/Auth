@@ -2,9 +2,11 @@ from http import HTTPStatus
 
 import pytest
 
-#  Временное решение для получения айди юзера и роли
-user_id = "d1c7d9bd-cf4f-4e60-99c0-85a2c4de35c6"
-role_id = "73a8ec75-3aea-47c4-816a-ce4a40b04ab8"
+from tests.functional.testdata.roles import roles
+from tests.functional.testdata.users import user
+
+user_id = user[0]["id"]
+role_id = roles[1]["id"]
 
 
 @pytest.mark.parametrize(

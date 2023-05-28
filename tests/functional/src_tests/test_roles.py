@@ -7,8 +7,8 @@ import pytest
     "query_data, expected_answer",
     [
         (
-            {"name": "Admin75fg55f7"},
-            {"status": HTTPStatus.CREATED, "name": "Admin75fg55f7"},
+            {"name": "Admin456"},
+            {"status": HTTPStatus.CREATED, "name": "Admin456"},
         ),
     ],
 )
@@ -18,8 +18,8 @@ async def test_add_role(
 ):
     response = await make_post_request("/roles/create", query_data)
     assert response["status"] == expected_answer["status"]
-    assert response['body']["name"] == expected_answer["name"]
-    role_id = response['body']["id"]
+    assert response["body"]["name"] == expected_answer["name"]
+    role_id = response["body"]["id"]
     await make_delete_request(f"/roles/delete/{role_id}")
 
 
@@ -27,7 +27,7 @@ async def test_add_role(
     "query_data, expected_answer",
     [
         (
-            {"name": "Admin66fdcdsv6"},
+            {"name": "Admin456"},
             {
                 "status": HTTPStatus.ACCEPTED,
                 "body": {"message": "Role deleted successfully"},
