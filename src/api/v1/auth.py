@@ -19,6 +19,28 @@ users_api_bp = Blueprint("api", __name__, url_prefix="/api/v1/auth")
 
 @users_api_bp.route("/signup", methods=["POST"])
 def signup():
+    """
+       ---
+       post:
+         summary: Регистрация пользователя
+         requestBody:
+           content:
+             application/json:
+               schema: SignupSchema
+         responses:
+           '200':
+             description: Success
+             content:
+               application/json:
+                 schema: SuccessResponseSchema
+           '400':
+             description: Error
+             content:
+               application/json:
+                 schema: ErrorResponseSchema
+         tags:
+           - Auth
+       """
     try:
         data = SignupSchema().load(request.json)
     except ValidationError as err:
@@ -41,6 +63,28 @@ def signup():
 
 @users_api_bp.route("/login", methods=["POST"])
 def login():
+    """
+       ---
+       post:
+         summary: Логин пользователя
+         requestBody:
+           content:
+             application/json:
+               schema: LoginSchema
+         responses:
+           '200':
+             description: Success
+             content:
+               application/json:
+                 schema: SuccessTokenResponseSchema
+           '400':
+             description: Error
+             content:
+               application/json:
+                 schema: ErrorResponseSchema
+         tags:
+           - Auth
+    """
     try:
         data = LoginSchema().load(request.json)
     except ValidationError as err:
@@ -72,6 +116,26 @@ def login():
 @jwt_required(refresh=True)
 @check_if_token_is_revoked()
 def refresh():
+    """
+       ---
+       post:
+         summary: Обновление токена
+         security:
+          - RefreshToken: []
+         responses:
+           '200':
+             description: Success
+             content:
+               application/json:
+                 schema: SuccessTokenResponseSchema
+           '401':
+             description: Unauthorized
+             content:
+               application/json:
+                 schema: ErrorResponseSchema
+         tags:
+           - Auth
+    """
     user_id = get_jwt_identity()
     old_token = get_jwt()["jti"]
     redis_service.kill_refresh(old_token)
@@ -97,6 +161,35 @@ def refresh():
 @jwt_required()
 @check_if_token_is_revoked()
 def logout():
+    """
+       ---
+       post:
+         summary: Выход из аккаунта
+         security:
+          - AccessToken: []
+         requestBody:
+           content:
+             application/json:
+               schema: LogoutSchema
+         responses:
+           '200':
+             description: Success
+             content:
+               application/json:
+                 schema: SuccessResponseSchema
+           '400':
+             description: Error
+             content:
+               application/json:
+                 schema: ErrorResponseSchema
+           '401':
+             description: Unauthorized
+             content:
+               application/json:
+                 schema: ErrorResponseSchema
+         tags:
+           - Auth
+    """
     user_id = get_jwt()["sub"]
     try:
         data = LogoutSchema().load(request.json)
@@ -131,6 +224,35 @@ def logout():
 @jwt_required()
 @check_if_token_is_revoked()
 def change():
+    """
+       ---
+       post:
+         summary: Изменение данных в аккаунте
+         security:
+          - AccessToken: []
+         requestBody:
+           content:
+             application/json:
+               schema: ChangeSchema
+         responses:
+           '200':
+             description: Success
+             content:
+               application/json:
+                 schema: SuccessResponseSchema
+           '400':
+             description: Error
+             content:
+               application/json:
+                 schema: ErrorResponseSchema
+           '401':
+             description: Unauthorized
+             content:
+               application/json:
+                 schema: ErrorResponseSchema
+         tags:
+           - Auth
+    """
     try:
         data = ChangeSchema().load(request.json)
     except ValidationError as err:
@@ -165,6 +287,31 @@ def change():
 @jwt_required()
 @check_if_token_is_revoked()
 def history():
+    """
+       ---
+       get:
+         summary: Получение истории входа в аккаунт
+         security:
+          - AccessToken: []
+         responses:
+           '200':
+             description: Success
+             content:
+               application/json:
+                 schema: UserHistoryResponseSchema
+           '400':
+             description: Error
+             content:
+               application/json:
+                 schema: ErrorResponseSchema
+           '401':
+             description: Unauthorized
+             content:
+               application/json:
+                 schema: ErrorResponseSchema
+         tags:
+           - Auth
+    """
     user_id = get_jwt()["sub"]
     user_history = history_service.get_user_history(user_id)
     if not user_history:
