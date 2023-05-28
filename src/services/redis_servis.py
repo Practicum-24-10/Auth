@@ -1,7 +1,7 @@
 from uuid import UUID
 
-from src.db.redis_db import redis_client
 from src.core.config import token_life
+from src.db.redis_db import redis_client
 
 
 class RedisService:
