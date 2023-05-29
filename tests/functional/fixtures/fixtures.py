@@ -61,3 +61,18 @@ async def make_delete_request():
             return {"status": status, "body": body}
 
         yield _make_delete_request
+
+
+@pytest.fixture
+async def make_update_request():
+    async with aiohttp.ClientSession() as session:
+
+        async def _make_update_request(endpoint: str, params: dict | None = None):
+            url = test_settings.service_url + endpoint
+            params = params or {}
+            async with session.patch(url, json=params) as response:
+                status = response.status
+                body = await response.json()
+            return {"status": status, "body": body}
+
+        yield _make_update_request

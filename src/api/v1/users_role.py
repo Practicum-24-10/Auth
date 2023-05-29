@@ -1,10 +1,10 @@
-from uuid import UUID
-
 from flask import Blueprint, request
+from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 
 from src.core.logger import logger
 from src.models.roles import UsersRole
+from src.schemas.roles_schemas import users_role_schema
 from src.services.users_role import UsersRoleService
 
 users_bp = Blueprint("users", __name__)
@@ -12,16 +12,14 @@ users_bp = Blueprint("users", __name__)
 
 @users_bp.post("/<uuid:id>/AddRole")
 def add_user_role(id):
-    user_id = id
-    data = request.json
-    if not data:
-        return {"message": "Data is missing"}, 400
-    role_id = data.get("role_id")
-    if not role_id:
-        return {"message": "Role is missing"}, 400
     try:
+        user_id = id
+        data = users_role_schema.load(request.json)
+        role_id = data.get("role_id")
         users_role = UsersRole(user_id=user_id, role_id=role_id)
         UsersRoleService.add_users_role(users_role)
+    except ValidationError as error:
+        return {"message": "Validation error", "errors": error.messages}, 400
     except IntegrityError as e:
         logger.error(str(e))
         return {"message": "This role has already been assigned to the user"}, 500
@@ -35,18 +33,16 @@ def add_user_role(id):
 
 @users_bp.delete("/<uuid:id>/DeleteRole")
 def delete_user_role(id):
-    user_id = id
-    data = request.json
-    if not data:
-        return {"message": "Data is missing"}, 400
-    role_id: UUID = data.get("role_id")
-    if not role_id:
-        return {"message": "Role is missing"}, 400
     try:
+        user_id = id
+        data = users_role_schema.load(request.json)
+        role_id = data.get("role_id")
         user_role = UsersRoleService.get_users_role(user_id=user_id, role_id=role_id)
         if user_role:
             UsersRoleService.delete_users_role(user_role)
             return {"message": "User's role was revoked successfully"}, 202
+    except ValidationError as error:
+        return {"message": "Validation error", "errors": error.messages}, 400
     except Exception as e:
         logger.error(str(e))
         return {"message": "Failed to delete a role to a user"}, 500

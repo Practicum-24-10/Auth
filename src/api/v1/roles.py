@@ -1,41 +1,29 @@
 from typing import Any
 
 from flask import Blueprint, request
-from marshmallow import Schema, fields, validate
+from marshmallow import ValidationError
 from werkzeug.exceptions import NotFound
 
 from src.core.logger import logger
 from src.models.roles import Role
+from src.schemas.roles_schemas import role_schema
 from src.services.roles import RoleService
 
 roles_bp = Blueprint("roles", __name__)
 
 
-class RoleSchema(Schema):
-    id = fields.String(required=True, validate=validate.Length(1, 128))
-    name = fields.String(required=True, validate=validate.Length(1, 128))
-
-
-role_schema = RoleSchema()
-
-
 @roles_bp.post("/create")
 def add_role():
-    data = request.json
-    if not data:
-        return {"message": "Data is missing"}, 400
-
-    name = data.get("name")
-    if not name:
-        return {"message": "Name is missing"}, 400
-
-    role = Role(name=name)
     try:
+        data = role_schema.load(request.json)
+        name = data.get("name")
+        role = Role(name=name)
         RoleService.add_role(role)
+    except ValidationError as error:
+        return {"message": "Validation error", "errors": error.messages}, 400
     except Exception as e:
         logger.error(str(e))
         return {"message": "Failed to add role"}, 500
-
     return {
         "id": role.id,
         "name": role.name,
@@ -44,19 +32,17 @@ def add_role():
 
 @roles_bp.patch("/update/<uuid:id>")
 def update_role(id) -> tuple[dict[str, Any], int]:
-    data = request.json
-    if not data:
-        return {"message": "Data is missing"}, 400
-    name = data.get("name")
-    if not name:
-        return {"message": "Role name is missing"}, 400
     try:
-        role: Role = RoleService.get_role(id)
+        data = role_schema.load(request.json)
+        name = data.get("name")
+        role = RoleService.get_role(id)
         RoleService.update_role(role, name)
         return {
             "id": role.id,
             "name": role.name,
         }, 200
+    except ValidationError as error:
+        return {"message": "Validation error", "errors": error.messages}, 400
     except NotFound as e:
         logger.error(str(e))
         return {"message": "Role not found"}, 404
