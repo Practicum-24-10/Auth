@@ -1,9 +1,11 @@
 from typing import Any
 
 from flask import Blueprint, request
+from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 from werkzeug.exceptions import NotFound
 
+from db.jwt import check_if_token_is_revoked
 from src.core.logger import logger
 from src.models.roles import Role
 from src.schemas.roles_schemas import role_schema
@@ -13,6 +15,8 @@ roles_bp = Blueprint("roles", __name__)
 
 
 @roles_bp.post("/create")
+@jwt_required()
+@check_if_token_is_revoked()
 def add_role():
     try:
         data = role_schema.load(request.json)
@@ -31,6 +35,8 @@ def add_role():
 
 
 @roles_bp.patch("/update/<uuid:id>")
+@jwt_required()
+@check_if_token_is_revoked()
 def update_role(id) -> tuple[dict[str, Any], int]:
     try:
         data = role_schema.load(request.json)
@@ -52,6 +58,8 @@ def update_role(id) -> tuple[dict[str, Any], int]:
 
 
 @roles_bp.delete("/delete/<id>")
+@jwt_required()
+@check_if_token_is_revoked()
 def delete_role(id):
     try:
         role = RoleService.get_role(id)
@@ -66,6 +74,8 @@ def delete_role(id):
 
 
 @roles_bp.get("/all")
+@jwt_required()
+@check_if_token_is_revoked()
 def get_all():
     try:
         roles = RoleService.get_all()
