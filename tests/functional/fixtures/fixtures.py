@@ -52,10 +52,12 @@ async def make_post_request():
 async def make_delete_request():
     async with aiohttp.ClientSession() as session:
 
-        async def _make_delete_request(endpoint: str, params: dict | None = None):
+        async def _make_delete_request(
+            endpoint: str, params: dict | None = None, headers: dict | None = None
+        ):
             url = test_settings.service_url + endpoint
             params = params or {}
-            async with session.delete(url, json=params) as response:
+            async with session.delete(url, json=params, headers=headers) as response:
                 status = response.status
                 body = await response.json()
             return {"status": status, "body": body}
@@ -67,10 +69,12 @@ async def make_delete_request():
 async def make_update_request():
     async with aiohttp.ClientSession() as session:
 
-        async def _make_update_request(endpoint: str, params: dict | None = None):
+        async def _make_update_request(
+            endpoint: str, params: dict | None = None, headers: dict | None = None
+        ):
             url = test_settings.service_url + endpoint
             params = params or {}
-            async with session.patch(url, json=params) as response:
+            async with session.patch(url, json=params, headers=headers) as response:
                 status = response.status
                 body = await response.json()
             return {"status": status, "body": body}
