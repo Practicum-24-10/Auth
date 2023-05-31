@@ -6,14 +6,14 @@ from tests.functional.testdata.roles import roles
 from tests.functional.testdata.users import user
 
 user_id = user[0]["id"]
-role_id = roles[1]["id"]
+role_name = roles[0]["name"]
 
 
 @pytest.mark.parametrize(
     "query_data, expected_answer",
     [
         (
-            {"role_id": role_id},
+            {"role_name": role_name},
             {"status": HTTPStatus.CREATED},
         ),
     ],
@@ -38,7 +38,7 @@ async def test_add_user_role(make_post_request, query_data, expected_answer):
     "query_data, expected_answer",
     [
         (
-            {"role_id": role_id},
+            {"role_name": role_name},
             {"status": HTTPStatus.ACCEPTED},
         ),
     ],

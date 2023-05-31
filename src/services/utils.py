@@ -2,6 +2,9 @@ from uuid import UUID, uuid4
 
 from flask import Request
 from flask_jwt_extended import create_access_token, create_refresh_token
+from services.perm_service import RolePermissionService
+
+from services.users_role import UsersRoleService
 from src.db.redis_db import redis_client
 from src.models.users import User
 
@@ -20,11 +23,24 @@ def get_protection(uuid: UUID):
     return protection_uuid
 
 
+def get_permissions(user_id):
+    user_roles = [row.id for row in UsersRoleService.get_user_roles(user_id)]
+    user_permissions = RolePermissionService.get_roles_permissions(user_roles)
+    return user_permissions
+
+
+def check_is_superuser(user_id):
+    user = User.query.filter_by(id=user_id).first()
+    return user.is_superuser
+
+
 def get_claims(uuid: UUID, request: Request) -> dict[str]:
     protection_uuid = get_protection(uuid)
+    permissions = get_permissions(uuid)
+    is_superuser = check_is_superuser(uuid)
     return {
-        "permissions": ["vup", "vip"],
-        "is_superuser": False,
+        "permissions": permissions,
+        "is_superuser": is_superuser,
         "pr_uuid": protection_uuid,
     }
 

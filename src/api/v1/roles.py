@@ -3,13 +3,17 @@ from typing import Any
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
+from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import NotFound
 
 from db.jwt import check_if_token_is_revoked
+from models.permissions import RolesPermissions
+from services.perm_service import RolePermissionService
 from src.core.logger import logger
 from src.models.roles import Role
 from src.schemas.roles_schemas import role_schema
 from src.services.roles import RoleService
+
 
 roles_bp = Blueprint("roles", __name__)
 
@@ -98,3 +102,48 @@ def get_role(id):
         logger.error(str(e))
         return {"message": "Failed to get role"}, 500
     return {"message": "Role not found"}, 404
+
+
+# @roles_bp.post("/<uuid:id>/AddPermissions")
+# @jwt_required()
+# @check_if_token_is_revoked()
+# def add_role_permissions(id):
+#     try:
+#         role_id = id
+#         data = request.json
+#         permission_id = data.get("permission_id")
+#         role_permission = RolesPermissions(role_id=role_id, permission_id=permission_id)
+#         RolePermissionService.add_role_permission(role_permission)
+#     except ValidationError as error:
+#         return {"message": "Validation error", "errors": error.messages}, 400
+#     except IntegrityError as e:
+#         logger.error(str(e))
+#         return {"message": "This perm has already been assigned to the role"}, 500
+#     except Exception as e:
+#         logger.error(str(e))
+#         return {"message": "Failed to assign a perm to a role"}, 500
+#     return {
+#         "message": "The perm was assigned to the role successfully",
+#     }, 201
+
+
+# @roles_bp.delete("/<uuid:id>/DeletePermissions")
+# @jwt_required()
+# @check_if_token_is_revoked()
+# def delete_role_permission(id):
+#     try:
+#         role_id = id
+#         data = request.json
+#         permission_id = data.get("permission_id")
+#         role_permission = RolePermissionService.get_role_permission(
+#             role_id=role_id, permission_id=permission_id
+#         )
+#         if role_permission:
+#             RolePermissionService.delete_role_permission(role_permission)
+#             return {"message": "Permission's role was revoked successfully"}, 202
+#     except ValidationError as error:
+#         return {"message": "Validation error", "errors": error.messages}, 400
+#     except Exception as e:
+#         logger.error(str(e))
+#         return {"message": "Failed to delete a perm to a role"}, 500
+#     return {"message": "No role no perm"}, 400

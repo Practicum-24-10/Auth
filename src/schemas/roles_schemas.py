@@ -7,7 +7,7 @@ class RoleSchema(Schema):
 
 
 class UsersRoleSchema(Schema):
-    role_id = fields.UUID(required=True)
+    role_name = fields.String(required=True, validate=validate.Length(1, 128))
 
 
 role_schema = RoleSchema()

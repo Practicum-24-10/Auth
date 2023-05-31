@@ -21,7 +21,7 @@ def add_user_role(id):
         data = users_role_schema.load(request.json)
         role_id = data.get("role_id")
         users_role = UsersRole(user_id=user_id, role_id=role_id)
-        UsersRoleService.add_users_role(users_role)
+        UsersRoleService.add_user_role(users_role)
     except ValidationError as error:
         return {"message": "Validation error", "errors": error.messages}, 400
     except IntegrityError as e:
@@ -43,7 +43,7 @@ def delete_user_role(id):
         user_id = id
         data = users_role_schema.load(request.json)
         role_id = data.get("role_id")
-        user_role = UsersRoleService.get_users_role(user_id=user_id, role_id=role_id)
+        user_role = UsersRoleService.get_user_role(user_id=user_id, role_id=role_id)
         if user_role:
             UsersRoleService.delete_users_role(user_role)
             return {"message": "User's role was revoked successfully"}, 202
