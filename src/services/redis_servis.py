@@ -1,7 +1,10 @@
 from uuid import UUID
 
+from flask import Request
+
 from src.core.config import token_life
 from src.db.redis_db import redis_client
+from src.services.utils import get_device_key
 
 
 class RedisService:
@@ -30,11 +33,20 @@ class RedisService:
             redis_client.delete(user_id)
 
     @classmethod
-    def kill_all_tokens(cls, refresh_token: str, access_token: str):
-        pipeline = redis_client.pipeline()
-        pipeline.setex(access_token, token_life.delta_access, "")
-        pipeline.setex(refresh_token, token_life.delta_refresh, "")
-        pipeline.execute()
+    def check_all_data(cls, jwt_payload: dict, request: Request):
+        jti = jwt_payload["jti"]
+        user_id = jwt_payload["sub"]
+        token_pr_id = jwt_payload["pr_uuid"]
+        device_id = jwt_payload["device_id"]
+        device_key = get_device_key(user_id, request)
+        data = redis_client.mget([jti, user_id, device_key])
+        if data[0] is not None:
+            return False
+        if data[1] != token_pr_id:
+            return False
+        if data[2] != device_id:
+            return False
+        return True
 
 
 redis_service = RedisService()

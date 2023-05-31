@@ -3,7 +3,6 @@ from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 
-from db.jwt import check_if_token_is_revoked
 from src.core.logger import logger
 from src.models.roles import UsersRole
 from src.schemas.roles_schemas import users_role_schema
@@ -14,7 +13,6 @@ users_bp = Blueprint("users", __name__)
 
 @users_bp.post("/<uuid:id>/AddRole")
 @jwt_required()
-@check_if_token_is_revoked()
 def add_user_role(id):
     try:
         user_id = id
@@ -37,7 +35,6 @@ def add_user_role(id):
 
 @users_bp.delete("/<uuid:id>/DeleteRole")
 @jwt_required()
-@check_if_token_is_revoked()
 def delete_user_role(id):
     try:
         user_id = id

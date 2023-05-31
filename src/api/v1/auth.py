@@ -8,7 +8,7 @@ from marshmallow import ValidationError
 
 from src.db.jwt import check_if_token_is_revoked
 from src.schemas.users_schemas import (ChangeSchema, LoginSchema, LogoutSchema,
-                                       SignupSchema)
+                                       SignupSchema, RefreshSchema)
 from src.services.history import history_service
 from src.services.redis_servis import redis_service
 from src.services.users import user_service
@@ -114,12 +114,16 @@ def login():
 
 @users_api_bp.route("/refresh", methods=["POST"])
 @jwt_required(refresh=True)
-@check_if_token_is_revoked()
+@check_if_token_is_revoked(request)
 def refresh():
     """
        ---
        post:
          summary: Обновление токена
+         requestBody:
+           content:
+             application/json:
+               schema: RefreshSchema
          security:
           - RefreshToken: []
          responses:
@@ -136,11 +140,23 @@ def refresh():
          tags:
            - Auth
     """
-    user_id = get_jwt_identity()
-    old_token = get_jwt()["jti"]
-    redis_service.kill_refresh(old_token)
     try:
-        access_token, refresh_token = generate_tokens(user_id, request)
+        data = RefreshSchema().load(request.json)
+    except ValidationError as err:
+        return make_response(
+            {
+                "message": "Validation Error",
+            },
+            HTTPStatus.BAD_REQUEST,
+        )
+    user_id = get_jwt_identity()
+    old_token = get_jwt()
+    jti_refresh = old_token["jti"]
+    force = data["force"]
+    redis_service.kill_refresh(jti_refresh)
+    try:
+        access_token, refresh_token = generate_tokens(user_id, request,
+                                                      old_token if not force else None)
     except ValueError:
         return make_response(
             {"message": "Access denied."},
@@ -159,7 +175,6 @@ def refresh():
 
 @users_api_bp.route("/logout", methods=["POST"])
 @jwt_required()
-@check_if_token_is_revoked()
 def logout():
     """
        ---
@@ -193,7 +208,7 @@ def logout():
     user_id = get_jwt()["sub"]
     try:
         data = LogoutSchema().load(request.json)
-    except ValidationError as err:
+    except ValidationError:
         return make_response(
             {
                 "message": "Validation Error",
@@ -202,16 +217,19 @@ def logout():
         )
     redis_service.check_logout_all(user_id, data["logout_all"])
     try:
-        jti_refresh = decode_token(data["refresh_token"])["jti"]
-    except DecodeError as err:
+        refresh_tk = decode_token(data["refresh_token"])
+        jti_refresh = refresh_tk["jti"]
+        user_id_refresh = refresh_tk["sub"]
+        if user_id_refresh != user_id:
+            raise DecodeError
+    except DecodeError:
         return make_response(
             {
                 "message": "Bad refresh token",
             },
             HTTPStatus.BAD_REQUEST,
         )
-    jti_access = get_jwt()["jti"]
-    redis_service.kill_all_tokens(jti_refresh, jti_access)
+    redis_service.kill_refresh(jti_refresh)
     return make_response(
         {
             "message": "Logout ok",
@@ -222,7 +240,6 @@ def logout():
 
 @users_api_bp.route("/change", methods=["POST"])
 @jwt_required()
-@check_if_token_is_revoked()
 def change():
     """
        ---
@@ -255,7 +272,7 @@ def change():
     """
     try:
         data = ChangeSchema().load(request.json)
-    except ValidationError as err:
+    except ValidationError:
         return make_response(
             {
                 "message": "Validation Error",
@@ -270,9 +287,10 @@ def change():
             },
             HTTPStatus.BAD_REQUEST,
         )
-    if user_service.is_data_exists(data):
+    message = user_service.check_data(user_id, data)
+    if message is not None:
         return make_response(
-            {"message": "This login already exists"}, HTTPStatus.BAD_REQUEST
+            {"message": message}, HTTPStatus.BAD_REQUEST
         )
     user_service.change_user_data(user_id, data)
     return make_response(
@@ -285,7 +303,6 @@ def change():
 
 @users_api_bp.route("/history", methods=["GET"])
 @jwt_required()
-@check_if_token_is_revoked()
 def history():
     """
        ---
