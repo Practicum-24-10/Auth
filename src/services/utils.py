@@ -3,8 +3,8 @@ from uuid import UUID, uuid4
 from flask import Request
 from flask_jwt_extended import create_access_token, create_refresh_token
 
-from services.perm_service import RolePermissionService
-from services.users_role import UsersRoleService
+from src.services.perm_service import RolePermissionService
+from src.services.users_role import UsersRoleService
 from src.db.redis_db import redis_client
 from src.models.users import User
 

@@ -6,7 +6,7 @@ from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
 from werkzeug.exceptions import NotFound
 
-from services.perm_service import RolePermissionService
+from src.services.perm_service import RolePermissionService
 from src.core.logger import logger
 from src.models.permissions import RolesPermissions
 from src.models.roles import Role
