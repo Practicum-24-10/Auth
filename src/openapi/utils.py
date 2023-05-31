@@ -6,7 +6,7 @@ from flask_swagger_ui import get_swaggerui_blueprint
 from src.schemas.responses import SuccessResponseSchema, ErrorResponseSchema, \
     SuccessTokenResponseSchema, UserHistoryResponseSchema
 from src.schemas.users_schemas import SignupSchema, LoginSchema, LogoutSchema, \
-    ChangeSchema
+    ChangeSchema, RefreshSchema
 
 
 def get_apispec(app):
@@ -24,6 +24,8 @@ def get_apispec(app):
     spec.components.schema("Success", schema=SuccessResponseSchema)
     spec.components.schema("SuccessGetTokens",
                            schema=SuccessTokenResponseSchema)
+    spec.components.schema("Refresh",
+                           schema=RefreshSchema)
     spec.components.schema("SuccessUserHistory",
                            schema=UserHistoryResponseSchema)
     spec.components.schema("Error", schema=ErrorResponseSchema)

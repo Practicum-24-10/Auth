@@ -10,22 +10,15 @@ from src.services.redis_servis import redis_service
 jwt = JWTManager()
 
 
-def check_if_token_is_revoked():
+def check_if_token_is_revoked(request):
     def func_wrapper(func):
         @wraps(func)
         def inner(*args, **kwargs):
             jwt_payload = get_jwt()
-            jti = jwt_payload["jti"]
-            user_id = jwt_payload["sub"]
-            token_pr_id = jwt_payload["pr_uuid"]
-            if redis_service.is_token_in_blacklist(jti):
+            if not redis_service.check_all_data(jwt_payload, request):
                 return {
-                    "message": "Access denied. Token has been revoked."
-                }, HTTPStatus.UNAUTHORIZED
-            if not redis_service.check_protection_id(user_id, token_pr_id):
-                return {
-                    "message": "Access denied. Token has been revoked."
-                }, HTTPStatus.UNAUTHORIZED
+                           "message": "Access denied. Token has been revoked."
+                       }, HTTPStatus.UNAUTHORIZED
             return func(*args, **kwargs)
 
         return inner

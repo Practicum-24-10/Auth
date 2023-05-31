@@ -7,43 +7,36 @@ import pytest
     "query_data, expected_answer",
     [
         (
-                {'username': 'usertdsdest', 'password': '2wewew34'},
-                {"status": HTTPStatus.OK,
-                 "body": {
-                     "message": "New account was registered"}},
+            {"username": "usertdsdest", "password": "2wewew34"},
+            {
+                "status": HTTPStatus.OK,
+                "body": {"message": "New account was registered"},
+            },
         ),
         (
-                {'username': '1', 'password': '1'},
-                {"status": HTTPStatus.BAD_REQUEST,
-                 "body": {
-                     "message": "Validation Error"}},
+            {"username": "1", "password": "1"},
+            {"status": HTTPStatus.BAD_REQUEST, "body": {"message": "Validation Error"}},
         ),
         (
-                {'username': '234234231', 'password': '1'},
-                {"status": HTTPStatus.BAD_REQUEST,
-                 "body": {
-                     "message": "Validation Error"}},
+            {"username": "234234231", "password": "1"},
+            {"status": HTTPStatus.BAD_REQUEST, "body": {"message": "Validation Error"}},
         ),
-
         (
-                {'username': '', 'password': '134223423'},
-                {"status": HTTPStatus.BAD_REQUEST,
-                 "body": {
-                     "message": "Validation Error"}},
+            {"username": "", "password": "134223423"},
+            {"status": HTTPStatus.BAD_REQUEST, "body": {"message": "Validation Error"}},
         ),
-
         (
-                {'username': 'usertest', 'password': '134223423'},
-                {"status": HTTPStatus.BAD_REQUEST,
-                 "body": {
-                     "message": "This login already exists"}},
+            {"username": "usertest", "password": "134223423"},
+            {
+                "status": HTTPStatus.BAD_REQUEST,
+                "body": {"message": "This login already exists"},
+            },
         ),
-
     ],
 )
 @pytest.mark.asyncio
 async def test_add_user(
-        make_post_request, make_delete_request, query_data, expected_answer
+    make_post_request, make_delete_request, query_data, expected_answer
 ):
     response = await make_post_request("/auth/signup", query_data)
     assert response["status"] == expected_answer["status"]
