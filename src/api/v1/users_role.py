@@ -6,6 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from src.core.logger import logger
 from src.models.roles import UsersRole
 from src.schemas.roles_schemas import users_role_schema
+from src.services.permissions import auth_required
 from src.services.users_role import UsersRoleService
 
 users_bp = Blueprint("users", __name__)
@@ -13,13 +14,14 @@ users_bp = Blueprint("users", __name__)
 
 @users_bp.post("/<uuid:id>/AddRole")
 @jwt_required()
+@auth_required(["AccessControle"])
 def add_user_role(id):
     try:
         user_id = id
         data = users_role_schema.load(request.json)
         role_id = data.get("role_id")
         users_role = UsersRole(user_id=user_id, role_id=role_id)
-        UsersRoleService.add_users_role(users_role)
+        UsersRoleService.add_user_role(users_role)
     except ValidationError as error:
         return {"message": "Validation error", "errors": error.messages}, 400
     except IntegrityError as e:
@@ -35,12 +37,13 @@ def add_user_role(id):
 
 @users_bp.delete("/<uuid:id>/DeleteRole")
 @jwt_required()
+@auth_required(["AccessControle"])
 def delete_user_role(id):
     try:
         user_id = id
         data = users_role_schema.load(request.json)
         role_id = data.get("role_id")
-        user_role = UsersRoleService.get_users_role(user_id=user_id, role_id=role_id)
+        user_role = UsersRoleService.get_user_role(user_id=user_id, role_id=role_id)
         if user_role:
             UsersRoleService.delete_users_role(user_role)
             return {"message": "User's role was revoked successfully"}, 202

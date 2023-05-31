@@ -2,11 +2,11 @@ from http import HTTPStatus
 
 import pytest
 
-from tests.functional.testdata.roles import roles
+from tests.functional.testdata.perm_role_user import roles
 from tests.functional.testdata.users import user
 
 user_id = user[0]["id"]
-role_id = roles[1]["id"]
+role_id = roles[2]["id"]
 
 
 @pytest.mark.parametrize(

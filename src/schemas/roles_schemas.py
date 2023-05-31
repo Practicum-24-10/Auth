@@ -7,8 +7,14 @@ class RoleSchema(Schema):
 
 
 class UsersRoleSchema(Schema):
-    role_id = fields.UUID(required=True)
+    role_id = fields.String(required=True, validate=validate.Length(1, 128))
+
+
+class PermissionSchema(Schema):
+    id = fields.UUID()
+    name = fields.String(required=True, validate=validate.Length(1, 128))
 
 
 role_schema = RoleSchema()
 users_role_schema = UsersRoleSchema()
+permission_schema = PermissionSchema()

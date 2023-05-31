@@ -10,7 +10,7 @@ class RoleService:
 
     @classmethod
     def get_role(cls, id):
-        return Role.query.get_or_404(id)
+        return db.session.query(Role).get_or_404(id)
 
     @classmethod
     def update_role(cls, role: Role, name: str):
@@ -24,4 +24,4 @@ class RoleService:
 
     @classmethod
     def get_all(cls):
-        return Role.query.all()
+        return db.session.query(Role).all()
