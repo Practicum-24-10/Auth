@@ -8,7 +8,7 @@ def auth_required(allowed_roles: list[str] = []):
         @wraps(fn)
         def decorator(*args, **kwargs):
             token = get_jwt()
-            user_roles = token.get("roles") or []
+            user_roles = token.get("permissions") or []
             is_superuser = token.get("is_superuser")
 
             if is_superuser == "True":

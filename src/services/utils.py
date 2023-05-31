@@ -24,7 +24,7 @@ def get_protection(uuid: UUID):
 
 
 def get_permissions(user_id):
-    user_roles = [row.id for row in UsersRoleService.get_user_roles(user_id)]
+    user_roles = [row.role_id for row in UsersRoleService.get_user_roles(user_id)]
     user_permissions = RolePermissionService.get_roles_permissions(user_roles)
     return user_permissions
 
