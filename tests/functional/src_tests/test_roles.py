@@ -2,7 +2,7 @@ from http import HTTPStatus
 
 import pytest
 
-from tests.functional.testdata.roles import roles
+from tests.functional.testdata.perm_role_user import roles
 
 
 @pytest.mark.parametrize(

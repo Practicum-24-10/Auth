@@ -8,10 +8,11 @@ from werkzeug.exceptions import NotFound
 
 from db.jwt import check_if_token_is_revoked
 from services.perm_service import RolePermissionService
+from src.services.permissions import auth_required
 from src.core.logger import logger
 from src.models.permissions import RolesPermissions
 from src.models.roles import Role
-from src.schemas.roles_schemas import role_schema
+from src.schemas.roles_schemas import role_schema, permission_schema
 from src.services.roles import RoleService
 
 roles_bp = Blueprint("roles", __name__)
@@ -20,6 +21,7 @@ roles_bp = Blueprint("roles", __name__)
 @roles_bp.post("/create")
 @jwt_required()
 @check_if_token_is_revoked()
+@auth_required(["RoleControle"])
 def add_role():
     try:
         data = role_schema.load(request.json)
@@ -109,7 +111,7 @@ def get_role(id):
 def add_role_permissions(id):
     try:
         role_id = id
-        data = request.json
+        data = permission_schema.load(request.json)
         permission_id = data.get("permission_id")
         role_permission = RolesPermissions(role_id=role_id, permission_id=permission_id)
         RolePermissionService.add_role_permission(role_permission)
@@ -132,7 +134,7 @@ def add_role_permissions(id):
 def delete_role_permission(id):
     try:
         role_id = id
-        data = request.json
+        data = permission_schema.load(request.json)
         permission_id = data.get("permission_id")
         role_permission = RolePermissionService.get_role_permission(
             role_id=role_id, permission_id=permission_id
