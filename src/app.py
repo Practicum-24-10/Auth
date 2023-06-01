@@ -10,7 +10,7 @@ from src.api.v1.roles import roles_bp
 from src.api.v1.users_role import users_bp
 from src.cli import createsuperuser_bp
 from src.db.jwt import init_jwt
-from src.db.postgres_db import db, init_db
+from src.db.postgres_db import init_db
 from src.db.redis_db import init_redis
 from src.openapi.utils import get_apispec, swagger_ui_blueprint
 
