@@ -13,7 +13,7 @@ role_id = roles[2]["id"]
     "query_data, expected_answer",
     [
         (
-            {"role_id": role_id},
+            {"id": role_id},
             {"status": HTTPStatus.CREATED},
         ),
     ],
@@ -38,7 +38,7 @@ async def test_add_user_role(make_post_request, query_data, expected_answer):
     "query_data, expected_answer",
     [
         (
-            {"role_id": role_id},
+            {"id": role_id},
             {"status": HTTPStatus.ACCEPTED},
         ),
     ],

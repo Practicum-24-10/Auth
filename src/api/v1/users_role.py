@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 
 from src.core.logger import logger
 from src.models.roles import UsersRole
-from src.schemas.roles_schemas import users_role_schema
+from src.schemas.roles_schemas import role_id_schema
 from src.services.permissions import auth_required
 from src.services.users_role import UsersRoleService
 
@@ -16,10 +16,35 @@ users_bp = Blueprint("users", __name__)
 @jwt_required()
 @auth_required(["AccessControle"])
 def add_user_role(id):
+    """
+       ---
+       post:
+         summary: Назначить роль пользователю
+         security:
+          - AccessToken: []
+         requestBody:
+           content:
+             application/json:
+               schema: RoleIdSchema
+         parameters:
+           - name: id
+             in: path
+             description: id роли
+             required: true
+             schema: UsersIdSchema
+         responses:
+           '200':
+             description: Success
+             content:
+               application/json:
+                 schema: SuccessResponseSchema
+         tags:
+           - Role
+    """
     try:
         user_id = id
-        data = users_role_schema.load(request.json)
-        role_id = data.get("role_id")
+        data = role_id_schema.load(request.json)
+        role_id = data.get("id")
         users_role = UsersRole(user_id=user_id, role_id=role_id)
         UsersRoleService.add_user_role(users_role)
     except ValidationError as error:
@@ -39,10 +64,35 @@ def add_user_role(id):
 @jwt_required()
 @auth_required(["AccessControle"])
 def delete_user_role(id):
+    """
+       ---
+       delete:
+         summary: Отобрать роль у пользователя
+         security:
+          - AccessToken: []
+         requestBody:
+           content:
+             application/json:
+               schema: RoleIdSchema
+         parameters:
+           - name: id
+             in: path
+             description: id роли
+             required: true
+             schema: UsersIdSchema
+         responses:
+           '200':
+             description: Success
+             content:
+               application/json:
+                 schema: SuccessResponseSchema
+         tags:
+           - Role
+    """
     try:
         user_id = id
-        data = users_role_schema.load(request.json)
-        role_id = data.get("role_id")
+        data = role_id_schema.load(request.json)
+        role_id = data.get("id")
         user_role = UsersRoleService.get_user_role(user_id=user_id, role_id=role_id)
         if user_role:
             UsersRoleService.delete_users_role(user_role)
