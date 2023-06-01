@@ -53,8 +53,9 @@ pytest tests/functional/src_tests
 ```
 
 ### Swagger
-- [http://localhost/docs/](http://localhost/docs/)
+- Если приложение запущено в контейнере: [http://localhost/docs/](http://localhost/docs/)
+- Если локально: [http://127.0.0.1:5000/docs/](http://127.0.0.1:5000/docs/)
 
 
 ### Схемма данных
-![Схемма данных](https://raw.githubusercontent.com/Practicum-24-10/Auth/main/data_schema.jpeg?token=GHSAT0AAAAAACB6H32D57FGEXC3VE2TO62GZDY6M6A)
+![Схемма данных](https://github.com/Practicum-24-10/Auth/blob/main/data_schema.jpeg)
