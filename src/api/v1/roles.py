@@ -157,7 +157,7 @@ def get_all():
              description: SUCCESS
              content:
                application/json:
-                 schema: RoleListSchema
+                 schema: RoleSchema
          tags:
            - Role
     """
@@ -178,14 +178,14 @@ def get_all():
 def add_role_permissions(id):
     """
        ---
-       patch:
+       post:
          summary: Дать разрешение для роли
          security:
           - AccessToken: []
          requestBody:
            content:
              application/json:
-               schema: RoleNameSchema
+               schema: PermissionIdSchema
          parameters:
            - name: role_id
              in: path
@@ -224,6 +224,31 @@ def add_role_permissions(id):
 @jwt_required()
 @auth_required(["AccessControle"])
 def delete_role_permission(id):
+    """
+       ---
+       delete:
+         summary: Отобрать разрешение у роли
+         security:
+          - AccessToken: []
+         requestBody:
+           content:
+             application/json:
+               schema: PermissionIdSchema
+         parameters:
+           - name: role_id
+             in: path
+             description: id роли
+             required: true
+             schema: RoleIdSchema
+         responses:
+           '200':
+             description: Success
+             content:
+               application/json:
+                 schema: SuccessResponseSchema
+         tags:
+           - Role
+    """
     try:
         role_id = id
         data = permission_schema.load(request.json)

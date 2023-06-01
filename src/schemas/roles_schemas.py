@@ -19,8 +19,12 @@ class RoleListSchema(Schema):
     roles = fields.Nested(RoleSchema, many=True)
 
 
-class UsersRoleSchema(Schema):
-    role_id = fields.String(required=True, validate=validate.Length(1, 128))
+class UsersIdSchema(Schema):
+    role_id = fields.UUID(attribute="id")
+
+
+class UsersRoleSchema(UsersIdSchema, RoleNameSchema):
+    pass
 
 
 class PermissionIdSchema(Schema):
@@ -32,6 +36,7 @@ class PermissionNameSchema(Schema):
         attribute="name", required=True, validate=validate.Length(1, 128)
     )
 
+
 class PermissionSchema(PermissionIdSchema, PermissionNameSchema):
     pass
 
@@ -40,5 +45,6 @@ role_schema = RoleSchema()
 role_name_schema = RoleNameSchema()
 role_id_schema = RoleIdSchema()
 role_list_schema = RoleListSchema()
+
 users_role_schema = UsersRoleSchema()
 permission_schema = PermissionSchema()
