@@ -2,6 +2,7 @@ from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from apispec_webframeworks.flask import FlaskPlugin
 from flask_swagger_ui import get_swaggerui_blueprint
+from src.schemas.roles_schemas import RoleListSchema, RoleNameSchema, RoleIdSchema, RoleSchema
 
 from src.schemas.responses import SuccessResponseSchema, ErrorResponseSchema, \
     SuccessTokenResponseSchema, UserHistoryResponseSchema
@@ -37,6 +38,12 @@ def get_apispec(app):
                               "Enter the token with the `Bearer: ` prefix, e.g. 'Bearer abcde12345'"}
     spec.components.security_scheme("AccessToken", access_key_scheme)
     spec.components.security_scheme("RefreshToken", refresh_key_scheme)
+
+    spec.components.schema("RoleNameSchema", schema=RoleNameSchema)
+    spec.components.schema("RoleIdSchema", schema=RoleIdSchema)
+    spec.components.schema("RoleSchema", schema=RoleSchema)
+    spec.components.schema("RoleListSchema", schema=RoleListSchema)
+
     create_tags(spec)
 
     load_docstrings(spec, app)
