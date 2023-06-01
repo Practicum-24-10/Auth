@@ -6,7 +6,6 @@ from src.core.config import config
 
 migrate = Migrate()
 db = SQLAlchemy()
-from src.models import *  # noqa
 
 
 def init_db(app: Flask):

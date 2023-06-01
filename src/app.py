@@ -25,9 +25,6 @@ def create_swagger_spec():
     return json.dumps(get_apispec(app).to_dict())
 
 
-#
-# with app.app_context():
-#     db.create_all()
 app.register_blueprint(createsuperuser_bp)
 app.register_blueprint(swagger_ui_blueprint)
 app.register_blueprint(roles_bp, url_prefix="/api/v1/roles/")
