@@ -11,7 +11,7 @@ def auth_required(allowed_roles: list[str] = []):
             user_permissions = token.get("permissions") or []
             is_superuser = token.get("is_superuser")
 
-            if is_superuser == "True":
+            if is_superuser is True:
                 return fn(*args, **kwargs)
 
             elif set(user_permissions) & set(allowed_roles):
