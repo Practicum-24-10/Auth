@@ -7,6 +7,8 @@ WORKDIR /app
 
 ENV PYTHONPATH=/app/
 
+COPY run_gunicorn.sh run_gunicorn.sh
+RUN chmod +x  /app/run_gunicorn.sh
 COPY requirements.txt requirements.txt
 
 RUN  pip install --upgrade pip \
@@ -14,4 +16,4 @@ RUN  pip install --upgrade pip \
 
 COPY . .
 
-CMD gunicorn src.main:app --bind 0.0.0.0:8000
+ENTRYPOINT ["/app/run_gunicorn.sh"]

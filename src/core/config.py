@@ -11,9 +11,9 @@ class AppSettings(BaseSettings):
     db_name: str = "db_name"
     db_user: str = "db_user"
     db_password: str = "db_password"
-    db_host: str = "localhost"
+    db_host: str = "postgres"
     db_port: str = "5432"
-    redis_host: str = "localhost"
+    redis_host: str = "redis"
     redis_port: str = "6379"
     loglevel: str = "INFO"
 

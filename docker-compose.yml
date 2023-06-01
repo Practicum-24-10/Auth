@@ -37,15 +37,13 @@ services:
       env_file:
         - .env
       healthcheck:
-        test: ["CMD", "curl", "--fail", "http://localhost:8000/api/users"]
+        test: ["CMD", "curl", "--fail", "http://localhost:8000/docs/"]
         interval: 15s
         timeout: 5s
         retries: 5
       depends_on:
         redis:
           condition: service_healthy
-      expose:
-        - 8000
 
     nginx:
       image: nginx:1.23.4-alpine

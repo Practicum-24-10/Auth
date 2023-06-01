@@ -6,7 +6,7 @@ class TestSettings(BaseSettings):
     db_user: str = "auth_user"
     db_password: str = "123qwe"
 
-    redis: str = "localhost"
+    redis: str = "redis"
     redis_port: int = 6379
 
     service_url: str = "http://127.0.0.1:5000/api/v1"
