@@ -16,11 +16,17 @@ class User(Mixin):
     is_superuser = db.Column(db.BOOLEAN(), default=False)
     is_active = db.Column(db.BOOLEAN(), default=True)
 
-    def __init__(self, username: str, password: str, id: UUID = None):
+    def __init__(
+        self,
+        username: str,
+        password: str,
+        id: UUID | None = None,
+        is_superuser: bool = False,
+    ):
         self.username = username
         self.set_password(password)
-        if id is not None:
-            self.id = id
+        self.is_superuser = is_superuser
+        self.id = id
 
     def set_password(self, password):
         self.password = generate_password_hash(password)
