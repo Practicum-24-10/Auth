@@ -5,19 +5,25 @@ from src.schemas.history_shema import HistorySchema
 
 
 class PaginationSchema(Schema):
-    page = fields.Integer(required=False, description='Страница пагинации',
-                          default=1, validate=Range(min=1,
-                                                    error="Value must be greater than 0"), example=1)
-    size = fields.Integer(required=False, description='Размер пагинации',
-                          default=10, validate=Range(min=1,
-                                                     error="Value must be greater than 0"), example=10)
-
-    @validates_schema
-    def validate_passwords(self, data, **kwargs):
-        page = data.get("page")
-        size = data.get("size")
-        if page < 1 or size < 1:
-            raise ValidationError("errre")
+    page = fields.Integer(
+        required=True,
+        description='Страница пагинации',
+        default=1,
+        validate=Range(
+            min=1,
+            error="Value must be greater than 0"),
+        example=1
+    )
+    size = fields.Integer(
+        required=True,
+        description='Размер пагинации',
+        default=10,
+        validate=Range(
+            min=1,
+            error="Value must be greater than 0"
+        ),
+        example=10
+    )
 
 
 class SuccessResponseSchema(Schema):
