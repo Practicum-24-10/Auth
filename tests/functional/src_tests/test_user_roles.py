@@ -5,6 +5,8 @@ import pytest
 from tests.functional.testdata.perm_role_user import roles
 from tests.functional.testdata.users import user
 
+pytestmark = pytest.mark.asyncio
+
 user_id = user[0]["id"]
 role_id = roles[2]["id"]
 
@@ -18,7 +20,7 @@ role_id = roles[2]["id"]
         ),
     ],
 )
-@pytest.mark.asyncio
+@pytestmark
 async def test_add_user_role(make_post_request, query_data, expected_answer):
     response = await make_post_request(
         "/auth/login", {"username": "usertest", "password": "2wewew34"}
@@ -43,7 +45,7 @@ async def test_add_user_role(make_post_request, query_data, expected_answer):
         ),
     ],
 )
-@pytest.mark.asyncio
+@pytestmark
 async def test_delete_user_role(
     make_delete_request, make_post_request, query_data, expected_answer
 ):

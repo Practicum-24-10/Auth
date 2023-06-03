@@ -4,6 +4,8 @@ import pytest
 
 from tests.functional.testdata.perm_role_user import roles
 
+pytestmark = pytest.mark.asyncio
+
 
 @pytest.mark.parametrize(
     "query_data, expected_answer",
@@ -14,7 +16,7 @@ from tests.functional.testdata.perm_role_user import roles
         ),
     ],
 )
-@pytest.mark.asyncio
+@pytestmark
 async def test_add_role(
     make_post_request, make_delete_request, query_data, expected_answer
 ):
@@ -47,7 +49,7 @@ async def test_add_role(
         ),
     ],
 )
-@pytest.mark.asyncio
+@pytestmark
 async def test_delete_role(
     make_post_request, make_delete_request, query_data, expected_answer
 ):
@@ -75,7 +77,7 @@ async def test_delete_role(
         ),
     ],
 )
-@pytest.mark.asyncio
+@pytestmark
 async def test_update_role(
     make_post_request,
     make_delete_request,
@@ -101,7 +103,7 @@ async def test_update_role(
     await make_delete_request(f"/roles/delete/{role_id}", headers=headers)
 
 
-@pytest.mark.asyncio
+@pytestmark
 async def test_get_all_role(make_get_request, make_post_request):
     response = await make_post_request(
         "/auth/login", {"username": "usertest", "password": "2wewew34"}

@@ -2,6 +2,8 @@ from http import HTTPStatus
 
 import pytest
 
+pytestmark = pytest.mark.asyncio
+
 
 @pytest.mark.parametrize(
     "query_data, expected_answer",
@@ -12,7 +14,7 @@ import pytest
         ),
     ],
 )
-@pytest.mark.asyncio
+@pytestmark
 async def test_login_user(
     make_post_request,
     make_get_request,

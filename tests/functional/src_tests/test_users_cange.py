@@ -2,6 +2,8 @@ from http import HTTPStatus
 
 import pytest
 
+pytestmark = pytest.mark.asyncio
+
 
 @pytest.mark.parametrize(
     "query_data, expected_answer",
@@ -62,7 +64,7 @@ import pytest
         ),
     ],
 )
-@pytest.mark.asyncio
+@pytestmark
 async def test_bad_change(
     make_post_request, make_delete_request, query_data, expected_answer
 ):
@@ -118,7 +120,7 @@ async def test_bad_change(
         ),
     ],
 )
-@pytest.mark.asyncio
+@pytestmark
 async def test_ok_change(
     make_post_request, make_delete_request, query_data, expected_answer
 ):
@@ -159,43 +161,3 @@ async def test_ok_change(
     )
     assert response["status"] == expected_answer["status"]
     assert response["body"] == expected_answer["body"]
-    #
-    # ```
-    # import requests
-    #
-    # ACCESS_TOKEN = "valid_access_token"
-    # REFRESH_TOKEN = "valid_refresh_token"
-    #
-    # headers = {
-    #     "Authorization": f"Bearer {REFRESH_TOKEN}",
-    #     "Content-Type": "application/json"
-    # }
-    #
-    # response = requests.post("http://example.com/refresh", headers=headers)
-    #
-    # if response.status_code == requests.codes.ok:
-    #     new_access_token = response.json()["access_token"]
-    #     print(f"New access token: {new_access_token}")
-    # else:
-    #     print("Token refresh failed")
-    # ```
-
-
-#
-# @pytest.mark.parametrize(
-#     "query_data, expected_answer",
-#     [
-#         (
-#                 {'username': 'user13', 'password': '234'},
-#                 {"status": HTTPStatus.OK,
-#                  "body": {"message": "Login ok"}},
-#         ),
-#     ],
-# )
-# @pytest.mark.asyncio
-# async def test_login_user(
-#         make_post_request, make_delete_request, query_data, expected_answer
-# ):
-#     response = await make_post_request("/auth/login", query_data)
-#     assert response["status"] == expected_answer["status"]
-#     assert response["body"] == expected_answer["body"]
