@@ -47,7 +47,7 @@ flask --app src/app create superuser
 
 ### Запуск тестов локально
 - Запустить приложение локально
-- Создать файл tests/.env по примеру tests/.env.example и выполнить команду:
+- Создать файл tests/.env по примеру tests/.env.dev.example и выполнить команду:
 ```
 pytest tests/functional/src_tests
 ```
