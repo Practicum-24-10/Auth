@@ -40,6 +40,12 @@ pytestmark = pytest.mark.asyncio
 async def test_add_user(
     make_post_request, make_delete_request, query_data, expected_answer
 ):
-    response = await make_post_request("/auth/signup", query_data)
+    # Arrange
+    request_url_login = "/auth/signup"
+
+    # Act
+    response = await make_post_request(request_url_login, query_data)
+
+    # Assert
     assert response["status"] == expected_answer["status"]
     assert response["body"] == expected_answer["body"]

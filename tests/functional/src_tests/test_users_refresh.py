@@ -18,15 +18,22 @@ pytestmark = pytest.mark.asyncio
 async def test_refresh(
     make_post_request, make_delete_request, query_data, expected_answer
 ):
-    response = await make_post_request("/auth/login", query_data)
-    refresh_token = response["body"]["refresh_token"]
+    # Arrange
+    request_url_login = "/auth/login"
     body = {"force": False}
+    request_url_refresh = "/auth/refresh"
+
+    # Act
+    response = await make_post_request(request_url_login, query_data)
+    refresh_token = response["body"]["refresh_token"]
     headers = {
         "Authorization": f"Bearer {refresh_token}",
         "Content-Type": "application/json",
     }
+    response = await make_post_request(request_url_refresh, params=body,
+                                       headers=headers)
 
-    response = await make_post_request("/auth/refresh", params=body, headers=headers)
+    # Assert
     assert response["status"] == expected_answer["status"]
     assert response["body"]["message"] == expected_answer["body"]["message"]
     assert response["body"]["access_token"]
