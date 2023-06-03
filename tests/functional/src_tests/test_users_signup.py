@@ -2,6 +2,8 @@ from http import HTTPStatus
 
 import pytest
 
+pytestmark = pytest.mark.asyncio
+
 
 @pytest.mark.parametrize(
     "query_data, expected_answer",
@@ -34,7 +36,7 @@ import pytest
         ),
     ],
 )
-@pytest.mark.asyncio
+@pytestmark
 async def test_add_user(
     make_post_request, make_delete_request, query_data, expected_answer
 ):
