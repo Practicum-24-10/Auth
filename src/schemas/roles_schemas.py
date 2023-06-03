@@ -20,7 +20,7 @@ class RoleListSchema(Schema):
 
 
 class UsersIdSchema(Schema):
-    role_id = fields.UUID(attribute="id")
+    user_id = fields.UUID(attribute="id")
 
 
 class UsersRoleSchema(UsersIdSchema, RoleNameSchema):

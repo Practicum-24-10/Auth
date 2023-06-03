@@ -1,5 +1,6 @@
 from src.db.postgres_db import db
 from src.models.roles import UsersRole
+from src.models.users import User
 
 
 class UsersRoleService:
@@ -20,3 +21,7 @@ class UsersRoleService:
     def delete_users_role(cls, users_role: UsersRole):
         db.session.delete(users_role)
         db.session.commit()
+
+    @classmethod
+    def get_user(cls, user_id):
+        return db.session.query(User).get_or_404(user_id)
