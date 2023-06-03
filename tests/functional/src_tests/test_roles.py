@@ -7,6 +7,26 @@ from tests.functional.testdata.perm_role_user import roles
 pytestmark = pytest.mark.asyncio
 
 
+@pytestmark
+async def test_get_all_role(make_get_request, make_post_request):
+    # Arrange
+    response = await make_post_request(
+        "/auth/login", {"username": "usertest", "password": "2wewew34"}
+    )
+    access_token = response["body"]["access_token"]
+    headers = {
+        "Authorization": f"Bearer {access_token}",
+        "Content-Type": "application/json",
+    }
+
+    # Act
+    response = await make_get_request("/roles/all", headers=headers)
+
+    # Assert
+    assert response["status"] == HTTPStatus.OK
+    assert response["body"] == roles
+
+
 @pytest.mark.parametrize(
     "query_data, expected_answer",
     [
@@ -18,8 +38,9 @@ pytestmark = pytest.mark.asyncio
 )
 @pytestmark
 async def test_add_role(
-    make_post_request, make_delete_request, query_data, expected_answer
+    make_post_request, query_data, expected_answer
 ):
+    # Arrange
     response = await make_post_request(
         "/auth/login", {"username": "usertest", "password": "2wewew34"}
     )
@@ -28,20 +49,22 @@ async def test_add_role(
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json",
     }
+
+    # Act
     response = await make_post_request(
         "/roles/create", params=query_data, headers=headers
     )
+
+    # Assert
     assert response["status"] == expected_answer["status"]
     assert response["body"]["name"] == expected_answer["name"]
-    role_id = response["body"]["id"]
-    await make_delete_request(f"/roles/delete/{role_id}", headers=headers)
 
 
 @pytest.mark.parametrize(
     "query_data, expected_answer",
     [
         (
-            {"name": "Admin456"},
+            {"id": roles[2]["id"]},
             {
                 "status": HTTPStatus.ACCEPTED,
                 "body": {"message": "Role deleted successfully"},
@@ -53,6 +76,7 @@ async def test_add_role(
 async def test_delete_role(
     make_post_request, make_delete_request, query_data, expected_answer
 ):
+    # Arrange
     response = await make_post_request(
         "/auth/login", {"username": "usertest", "password": "2wewew34"}
     )
@@ -61,9 +85,13 @@ async def test_delete_role(
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json",
     }
-    response = await make_post_request("/roles/create", query_data, headers=headers)
-    role_id = response["body"]["id"]
-    response = await make_delete_request(f"/roles/delete/{role_id}", headers=headers)
+
+    # Act
+    response = await make_delete_request(
+        f"/roles/delete/{query_data['id']}", headers=headers
+    )
+
+    # Assert
     assert response["status"] == expected_answer["status"]
     assert response["body"] == expected_answer["body"]
 
@@ -72,7 +100,7 @@ async def test_delete_role(
     "query_data, expected_answer",
     [
         (
-            {"name": "Admin456"},
+            {"id": roles[1]["id"]},
             {"status": HTTPStatus.OK, "name": "NotAdmin"},
         ),
     ],
@@ -80,11 +108,11 @@ async def test_delete_role(
 @pytestmark
 async def test_update_role(
     make_post_request,
-    make_delete_request,
     make_update_request,
     query_data,
     expected_answer,
 ):
+    # Arrange
     response = await make_post_request(
         "/auth/login", {"username": "usertest", "password": "2wewew34"}
     )
@@ -93,26 +121,14 @@ async def test_update_role(
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json",
     }
-    response = await make_post_request("/roles/create", query_data, headers=headers)
-    role_id = response["body"]["id"]
+
+    # Act
     response = await make_update_request(
-        f"/roles/update/{role_id}", {"name": "NotAdmin"}, headers=headers
+        f"/roles/update/{query_data['id']}",
+        {"name": expected_answer["name"]},
+        headers=headers,
     )
+
+    # Assert
     assert response["status"] == expected_answer["status"]
     assert response["body"]["name"] == expected_answer["name"]
-    await make_delete_request(f"/roles/delete/{role_id}", headers=headers)
-
-
-@pytestmark
-async def test_get_all_role(make_get_request, make_post_request):
-    response = await make_post_request(
-        "/auth/login", {"username": "usertest", "password": "2wewew34"}
-    )
-    access_token = response["body"]["access_token"]
-    headers = {
-        "Authorization": f"Bearer {access_token}",
-        "Content-Type": "application/json",
-    }
-    response = await make_get_request("/roles/all", headers=headers)
-    assert response["status"] == HTTPStatus.OK
-    assert response["body"] == roles

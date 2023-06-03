@@ -22,6 +22,7 @@ role_id = roles[2]["id"]
 )
 @pytestmark
 async def test_add_user_role(make_post_request, query_data, expected_answer):
+    # Arrange
     response = await make_post_request(
         "/auth/login", {"username": "usertest", "password": "2wewew34"}
     )
@@ -30,9 +31,13 @@ async def test_add_user_role(make_post_request, query_data, expected_answer):
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json",
     }
+
+    # Act
     response = await make_post_request(
         f"/users/{user_id}/AddRole", query_data, headers=headers
     )
+
+    # Assert
     assert response["status"] == expected_answer["status"]
 
 
@@ -49,6 +54,7 @@ async def test_add_user_role(make_post_request, query_data, expected_answer):
 async def test_delete_user_role(
     make_delete_request, make_post_request, query_data, expected_answer
 ):
+    # Arrange
     response = await make_post_request(
         "/auth/login", {"username": "usertest", "password": "2wewew34"}
     )
@@ -57,7 +63,11 @@ async def test_delete_user_role(
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json",
     }
+
+    # Act
     response = await make_delete_request(
         f"/users/{user_id}/DeleteRole", query_data, headers=headers
     )
+
+    # Assert
     assert response["status"] == expected_answer["status"]
