@@ -19,12 +19,15 @@ class HistoryService:
         db.session.commit()
 
     @classmethod
-    def get_user_history(cls, user_id: UUID) -> list[None, dict]:
-        user_history = History.query.filter_by(user_id=user_id).all()
-        if user_history is None:
-            return []
-        else:
-            return [HistorySchema().dump(data) for data in user_history]
+    def get_user_history_query(cls, user_id: UUID):
+        user_history = History.query.filter_by(user_id=user_id).order_by(
+            History.login_time.desc())
+        return user_history
+
+    @classmethod
+    def get_paginate_history(cls, queryset, page, per_page):
+        answer = queryset.paginate(page=page, per_page=per_page, error_out=False)
+        return answer
 
 
 history_service = HistoryService()

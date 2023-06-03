@@ -7,6 +7,8 @@ from jwt import DecodeError
 from marshmallow import ValidationError
 
 from src.db.jwt import check_if_token_is_revoked
+from src.schemas.history_shema import HistorySchema
+from src.schemas.responses import PaginationSchema
 from src.schemas.users_schemas import (ChangeSchema, LoginSchema, LogoutSchema,
                                        SignupSchema, RefreshSchema)
 from src.services.history import history_service
@@ -308,6 +310,9 @@ def history():
        ---
        get:
          summary: Получение истории входа в аккаунт
+         parameters:
+          - in: query
+            schema: PaginationSchema
          security:
           - AccessToken: []
          responses:
@@ -329,16 +334,28 @@ def history():
          tags:
            - Auth
     """
-    user_id = get_jwt()["sub"]
-    user_history = history_service.get_user_history(user_id)
-    if not user_history:
+    try:
+        data = PaginationSchema().load(request.args)
+    except ValidationError:
         return make_response(
             {
-                "message": "Login history is None",
+                "message": "Validation Error",
             },
-            HTTPStatus.NOT_FOUND,
+            HTTPStatus.BAD_REQUEST,
         )
+    user_id = get_jwt()["sub"]
+    user_history_query = history_service.get_user_history_query(user_id)
+    answer = history_service.get_paginate_history(user_history_query,
+                                                  data["page"],
+                                                  data["size"])
+    history_paginate = [HistorySchema().dump(data) for data in answer.items]
     return make_response(
-        {"message": "Login history", "history": user_history},
+        {"message": "Login history",
+         "history": history_paginate,
+         "page": data["page"],
+         "size": data["size"],
+         "total_pages": answer.pages,
+         "total_items": answer.total
+         },
         HTTPStatus.OK,
     )

@@ -28,7 +28,7 @@ async def test_login_user(
         "Authorization": f"Bearer {access_token}",
         "Content-Type": "application/json",
     }
-    response = await make_get_request("/auth/history", headers=headers)
+    response = await make_get_request("/auth/history?size=10&page=1", headers=headers)
     assert response["status"] == expected_answer["status"]
     assert response["body"]["message"] == expected_answer["body"]["message"]
     assert len(response["body"]["history"]) >= 1
