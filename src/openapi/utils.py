@@ -17,7 +17,7 @@ from src.schemas.responses import (
     SuccessResponseSchema,
     ErrorResponseSchema,
     SuccessTokenResponseSchema,
-    UserHistoryResponseSchema,
+    UserHistoryResponseSchema, PaginationSchema,
 )
 from src.schemas.users_schemas import (
     SignupSchema,
@@ -41,6 +41,7 @@ def get_apispec(app):
     spec.components.schema("Logout", schema=LogoutSchema)
     spec.components.schema("Change", schema=ChangeSchema)
     spec.components.schema("Success", schema=SuccessResponseSchema)
+    spec.components.schema("Pagination", schema=PaginationSchema)
     spec.components.schema("SuccessGetTokens", schema=SuccessTokenResponseSchema)
     spec.components.schema("Refresh", schema=RefreshSchema)
     spec.components.schema("SuccessUserHistory", schema=UserHistoryResponseSchema)
