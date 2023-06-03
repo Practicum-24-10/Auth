@@ -4,6 +4,7 @@ from flask import Blueprint, request
 from flask_jwt_extended import jwt_required
 from marshmallow import ValidationError
 from sqlalchemy.exc import IntegrityError
+from werkzeug.exceptions import NotFound
 
 from src.core.logger import logger
 from src.models.roles import UsersRole
@@ -14,10 +15,10 @@ from src.services.users_role import UsersRoleService
 users_bp = Blueprint("users", __name__)
 
 
-@users_bp.post("/<uuid:id>/AddRole")
+@users_bp.post("/<uuid:user_id>/AddRole")
 @jwt_required()
 @auth_required(["AccessControle"])
-def add_user_role(id):
+def add_user_role(user_id):
     """
     ---
     post:
@@ -44,7 +45,8 @@ def add_user_role(id):
         - Role
     """
     try:
-        user_id = id
+        user_id = user_id
+        UsersRoleService.get_user(user_id=user_id)
         data = role_id_schema.load(request.json)
         role_id = data.get("id")
         users_role = UsersRole(user_id=user_id, role_id=role_id)
@@ -59,6 +61,9 @@ def add_user_role(id):
         return {
             "message": "This role has already been assigned to the user"
         }, HTTPStatus.INTERNAL_SERVER_ERROR
+    except NotFound as e:
+        logger.error(str(e))
+        return {"message": "Users not found"}, HTTPStatus.NOT_FOUND
     except Exception as e:
         logger.error(str(e))
         return {

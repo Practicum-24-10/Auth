@@ -1,4 +1,5 @@
 from functools import wraps
+from http import HTTPStatus
 
 from flask_jwt_extended import get_jwt
 
@@ -17,7 +18,9 @@ def auth_required(allowed_roles: list[str] = []):
             elif set(user_permissions) & set(allowed_roles):
                 return fn(*args, **kwargs)
             else:
-                return {"message": "You are not authorized to perform this action"}, 403
+                return {
+                    "message": "You are not authorized to perform this action"
+                }, HTTPStatus.FORBIDDEN
 
         return decorator
 
