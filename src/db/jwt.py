@@ -5,6 +5,7 @@ from http import HTTPStatus
 from flask import Flask
 from flask_jwt_extended import JWTManager, get_jwt
 
+from src.core.config import SECRET_KEY, PUBLIC_KEY
 from src.services.redis_servis import redis_service
 
 jwt = JWTManager()
@@ -27,7 +28,9 @@ def check_if_token_is_revoked(request):
 
 
 def init_jwt(app: Flask):
-    app.config["JWT_SECRET_KEY"] = "super-secret"  # Change this!
+    app.config['JWT_ALGORITHM'] = 'RS256'
+    app.config["JWT_PRIVATE_KEY"] = open(SECRET_KEY).read()
+    app.config["JWT_PUBLIC_KEY"] = open(PUBLIC_KEY).read()
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
     app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
     app.config["JWT_BLACKLIST_ENABLED"] = True

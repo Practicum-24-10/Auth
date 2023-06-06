@@ -28,3 +28,8 @@ class TokensLife(BaseSettings):
 token_life = TokensLife()
 config = AppSettings()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+KEY_DIR = os.path.dirname(
+    os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+SECRET_KEY = os.path.join(KEY_DIR, os.environ.get("SECRET_KEY", ''))
+PUBLIC_KEY = os.path.join(KEY_DIR, os.environ.get("PUBLIC_KEY", ''))
