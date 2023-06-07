@@ -45,6 +45,14 @@ target_db = current_app.extensions['migrate'].db
 # ... etc.
 
 
+def include_object(object, name, type_, reflected, compare_to):
+    if (type_ == "table" and
+        str(name).startswith("history")):
+        return False
+    else:
+        return True
+
+
 def get_metadata():
     if hasattr(target_db, 'metadatas'):
         return target_db.metadatas[None]
@@ -95,6 +103,7 @@ def run_migrations_online():
     with connectable.connect() as connection:
         context.configure(
             connection=connection,
+            include_object=include_object,
             target_metadata=get_metadata(),
             process_revision_directives=process_revision_directives,
             **current_app.extensions['migrate'].configure_args
