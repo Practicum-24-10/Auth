@@ -57,5 +57,9 @@ pytest tests/functional/src_tests
 - Если локально: [http://127.0.0.1:5000/docs/](http://127.0.0.1:5000/docs/)
 
 
+### Jaeger UI
+- Если приложение запущено в контейнере: [http://localhost:16686/search](http://localhost:16686/search)
+
+
 ### Схемма данных
 ![Схемма данных](https://github.com/Practicum-24-10/Auth/blob/main/data_schema.jpeg)
