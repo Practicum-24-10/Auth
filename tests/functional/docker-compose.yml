@@ -36,6 +36,8 @@ services:
       image: auth_api-image
       env_file:
         - ../../.env
+      environment:
+        - DEBUG=True
       depends_on:
         redis:
           condition: service_healthy
