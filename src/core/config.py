@@ -16,6 +16,7 @@ class AppSettings(BaseSettings):
     redis_host: str = "redis"
     redis_port: str = "6379"
     loglevel: str = "INFO"
+    debug: bool = False
 
 
 class TokensLife(BaseSettings):
