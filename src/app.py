@@ -6,6 +6,8 @@ from flask import Flask, request
 
 sys.path.append(os.path.join(os.getcwd(), ".."))
 
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 
 from src.api.v1.auth import users_api_bp
@@ -30,6 +32,15 @@ init_db(app)
 init_redis(app)
 init_jwt(app)
 init_oauth(app)
+
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["40 per 2 minute"],
+    storage_uri=f"redis://{config.redis_host}:{config.redis_port}/0",
+    storage_options={"socket_connect_timeout": 30},
+    strategy="fixed-window",
+)
 
 
 if not DEBUG:
