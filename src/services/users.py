@@ -1,3 +1,4 @@
+import uuid
 from uuid import UUID
 
 from src.db.postgres_db import db
@@ -6,10 +7,12 @@ from src.models.users import User
 
 class UserService:
     @classmethod
-    def add_user(cls, data: dict) -> None:
-        user = User(username=data["username"], password=data["password"])
+    def add_user(cls, data: dict) -> UUID:
+        new_id = uuid.uuid4()
+        user = User(username=data["username"], password=data["password"], id=new_id)
         db.session.add(user)
         db.session.commit()
+        return new_id
 
     @classmethod
     def is_data_exists(cls, data: dict) -> bool:
@@ -20,15 +23,15 @@ class UserService:
 
     @classmethod
     def check_data(cls, user_id: str, data: dict) -> str | None:
-        check_username = User.query.filter_by(
-            username=data["username"]).first()
+        check_username = User.query.filter_by(username=data["username"]).first()
         if check_username is not None:
             return "This login already exists"
         search_user = User.query.filter_by(id=user_id).first()
         if search_user is None:
             return "User has been deleted"
-        elif data["old_password"] is not None \
-                and not search_user.check_password(data["old_password"]):
+        elif data["old_password"] is not None and not search_user.check_password(
+            data["old_password"]
+        ):
             return "Wrong password"
         return None
 

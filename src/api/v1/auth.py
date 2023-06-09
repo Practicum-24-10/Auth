@@ -10,7 +10,7 @@ from src.db.jwt import check_if_token_is_revoked
 from src.schemas.history_shema import HistorySchema
 from src.schemas.responses import PaginationSchema
 from src.schemas.users_schemas import (ChangeSchema, LoginSchema, LogoutSchema,
-                                       SignupSchema, RefreshSchema)
+                                       RefreshSchema, SignupSchema)
 from src.services.history import history_service
 from src.services.redis_servis import redis_service
 from src.services.users import user_service
@@ -22,27 +22,27 @@ users_api_bp = Blueprint("api", __name__, url_prefix="/api/v1/auth")
 @users_api_bp.route("/signup", methods=["POST"])
 def signup():
     """
-       ---
-       post:
-         summary: Регистрация пользователя
-         requestBody:
-           content:
-             application/json:
-               schema: SignupSchema
-         responses:
-           '200':
-             description: Success
-             content:
-               application/json:
-                 schema: SuccessResponseSchema
-           '400':
-             description: Error
-             content:
-               application/json:
-                 schema: ErrorResponseSchema
-         tags:
-           - Auth
-       """
+    ---
+    post:
+      summary: Регистрация пользователя
+      requestBody:
+        content:
+          application/json:
+            schema: SignupSchema
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema: SuccessResponseSchema
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema: ErrorResponseSchema
+      tags:
+        - Auth
+    """
     try:
         data = SignupSchema().load(request.json)
     except ValidationError as err:
@@ -57,35 +57,32 @@ def signup():
             {"message": "This login already exists"}, HTTPStatus.BAD_REQUEST
         )
     user_service.add_user(data)
-    return make_response(
-        {"message": "New account was registered"},
-        HTTPStatus.OK
-    )
+    return make_response({"message": "New account was registered"}, HTTPStatus.OK)
 
 
 @users_api_bp.route("/login", methods=["POST"])
 def login():
     """
-       ---
-       post:
-         summary: Логин пользователя
-         requestBody:
-           content:
-             application/json:
-               schema: LoginSchema
-         responses:
-           '200':
-             description: Success
-             content:
-               application/json:
-                 schema: SuccessTokenResponseSchema
-           '400':
-             description: Error
-             content:
-               application/json:
-                 schema: ErrorResponseSchema
-         tags:
-           - Auth
+    ---
+    post:
+      summary: Логин пользователя
+      requestBody:
+        content:
+          application/json:
+            schema: LoginSchema
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema: SuccessTokenResponseSchema
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema: ErrorResponseSchema
+      tags:
+        - Auth
     """
     try:
         data = LoginSchema().load(request.json)
@@ -119,28 +116,28 @@ def login():
 @check_if_token_is_revoked(request)
 def refresh():
     """
-       ---
-       post:
-         summary: Обновление токена
-         requestBody:
-           content:
-             application/json:
-               schema: RefreshSchema
-         security:
-          - RefreshToken: []
-         responses:
-           '200':
-             description: Success
-             content:
-               application/json:
-                 schema: SuccessTokenResponseSchema
-           '401':
-             description: Unauthorized
-             content:
-               application/json:
-                 schema: ErrorResponseSchema
-         tags:
-           - Auth
+    ---
+    post:
+      summary: Обновление токена
+      requestBody:
+        content:
+          application/json:
+            schema: RefreshSchema
+      security:
+       - RefreshToken: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema: SuccessTokenResponseSchema
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: ErrorResponseSchema
+      tags:
+        - Auth
     """
     try:
         data = RefreshSchema().load(request.json)
@@ -157,13 +154,11 @@ def refresh():
     force = data["force"]
     redis_service.kill_refresh(jti_refresh)
     try:
-        access_token, refresh_token = generate_tokens(user_id, request,
-                                                      old_token if not force else None)
-    except ValueError:
-        return make_response(
-            {"message": "Access denied."},
-            HTTPStatus.UNAUTHORIZED
+        access_token, refresh_token = generate_tokens(
+            user_id, request, old_token if not force else None
         )
+    except ValueError:
+        return make_response({"message": "Access denied."}, HTTPStatus.UNAUTHORIZED)
 
     return make_response(
         {
@@ -179,33 +174,33 @@ def refresh():
 @jwt_required()
 def logout():
     """
-       ---
-       post:
-         summary: Выход из аккаунта
-         security:
-          - AccessToken: []
-         requestBody:
-           content:
-             application/json:
-               schema: LogoutSchema
-         responses:
-           '200':
-             description: Success
-             content:
-               application/json:
-                 schema: SuccessResponseSchema
-           '400':
-             description: Error
-             content:
-               application/json:
-                 schema: ErrorResponseSchema
-           '401':
-             description: Unauthorized
-             content:
-               application/json:
-                 schema: ErrorResponseSchema
-         tags:
-           - Auth
+    ---
+    post:
+      summary: Выход из аккаунта
+      security:
+       - AccessToken: []
+      requestBody:
+        content:
+          application/json:
+            schema: LogoutSchema
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema: SuccessResponseSchema
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema: ErrorResponseSchema
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: ErrorResponseSchema
+      tags:
+        - Auth
     """
     user_id = get_jwt()["sub"]
     try:
@@ -244,33 +239,33 @@ def logout():
 @jwt_required()
 def change():
     """
-       ---
-       post:
-         summary: Изменение данных в аккаунте
-         security:
-          - AccessToken: []
-         requestBody:
-           content:
-             application/json:
-               schema: ChangeSchema
-         responses:
-           '200':
-             description: Success
-             content:
-               application/json:
-                 schema: SuccessResponseSchema
-           '400':
-             description: Error
-             content:
-               application/json:
-                 schema: ErrorResponseSchema
-           '401':
-             description: Unauthorized
-             content:
-               application/json:
-                 schema: ErrorResponseSchema
-         tags:
-           - Auth
+    ---
+    post:
+      summary: Изменение данных в аккаунте
+      security:
+       - AccessToken: []
+      requestBody:
+        content:
+          application/json:
+            schema: ChangeSchema
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema: SuccessResponseSchema
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema: ErrorResponseSchema
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: ErrorResponseSchema
+      tags:
+        - Auth
     """
     try:
         data = ChangeSchema().load(request.json)
@@ -291,9 +286,7 @@ def change():
         )
     message = user_service.check_data(user_id, data)
     if message is not None:
-        return make_response(
-            {"message": message}, HTTPStatus.BAD_REQUEST
-        )
+        return make_response({"message": message}, HTTPStatus.BAD_REQUEST)
     user_service.change_user_data(user_id, data)
     return make_response(
         {
@@ -307,32 +300,32 @@ def change():
 @jwt_required()
 def history():
     """
-       ---
-       get:
-         summary: Получение истории входа в аккаунт
-         parameters:
-          - in: query
-            schema: PaginationSchema
-         security:
-          - AccessToken: []
-         responses:
-           '200':
-             description: Success
-             content:
-               application/json:
-                 schema: UserHistoryResponseSchema
-           '400':
-             description: Error
-             content:
-               application/json:
-                 schema: ErrorResponseSchema
-           '401':
-             description: Unauthorized
-             content:
-               application/json:
-                 schema: ErrorResponseSchema
-         tags:
-           - Auth
+    ---
+    get:
+      summary: Получение истории входа в аккаунт
+      parameters:
+       - in: query
+         schema: PaginationSchema
+      security:
+       - AccessToken: []
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema: UserHistoryResponseSchema
+        '400':
+          description: Error
+          content:
+            application/json:
+              schema: ErrorResponseSchema
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema: ErrorResponseSchema
+      tags:
+        - Auth
     """
     try:
         data = PaginationSchema().load(request.args)
@@ -345,17 +338,18 @@ def history():
         )
     user_id = get_jwt()["sub"]
     user_history_query = history_service.get_user_history_query(user_id)
-    answer = history_service.get_paginate_history(user_history_query,
-                                                  data["page"],
-                                                  data["size"])
+    answer = history_service.get_paginate_history(
+        user_history_query, data["page"], data["size"]
+    )
     history_paginate = [HistorySchema().dump(data) for data in answer.items]
     return make_response(
-        {"message": "Login history",
-         "history": history_paginate,
-         "page": data["page"],
-         "size": data["size"],
-         "total_pages": answer.pages,
-         "total_items": answer.total
-         },
+        {
+            "message": "Login history",
+            "history": history_paginate,
+            "page": data["page"],
+            "size": data["size"],
+            "total_pages": answer.pages,
+            "total_items": answer.total,
+        },
         HTTPStatus.OK,
     )

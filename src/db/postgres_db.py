@@ -9,9 +9,9 @@ db = SQLAlchemy()
 
 
 def init_db(app: Flask):
-    app.config[
-        "SQLALCHEMY_DATABASE_URI"
-    ] = f"postgresql://{config.db_user}:{config.db_password}" \
+    app.config["SQLALCHEMY_DATABASE_URI"] = (
+        f"postgresql://{config.db_user}:{config.db_password}"
         f"@{config.db_host}/{config.db_name}"
+    )
     db.init_app(app)
     migrate.init_app(app, db)
