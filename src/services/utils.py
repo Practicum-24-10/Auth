@@ -3,11 +3,10 @@ from uuid import UUID, uuid4
 from flask import Request
 from flask_jwt_extended import create_access_token, create_refresh_token
 
-from src.services.perm_service import RolePermissionService
-from src.services.users_role import UsersRoleService
 from src.db.redis_db import redis_client
 from src.models.users import User
-import jwt
+from src.services.perm_service import RolePermissionService
+from src.services.users_role import UsersRoleService
 
 
 def get_protection(uuid: UUID):
@@ -44,8 +43,7 @@ def get_device_id(uuid: UUID, request: Request):
 
 
 def get_permissions(user_id):
-    user_roles = [row.role_id for row in
-                  UsersRoleService.get_user_roles(user_id)]
+    user_roles = [row.role_id for row in UsersRoleService.get_user_roles(user_id)]
     user_permissions = [
         row.permission
         for row in RolePermissionService.get_roles_permissions(user_roles)

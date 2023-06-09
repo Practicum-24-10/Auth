@@ -26,11 +26,28 @@ class TokensLife(BaseSettings):
     delta_access: timedelta = timedelta(hours=1)
 
 
+class YandexClient(BaseSettings):
+    yandex_client_id: str = ""
+    yandex_client_secret: str = ""
+
+
+class GoogleClient(BaseSettings):
+    google_client_id: str = ""
+    google_client_secret: str = ""
+
+
+class VkClient(BaseSettings):
+    vk_client_id: str = ""
+    vk_client_secret: str = ""
+
+
+google_cli = GoogleClient()
+vk_cli = VkClient()
+yandex_cli = YandexClient()
 token_life = TokensLife()
 config = AppSettings()
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-KEY_DIR = os.path.dirname(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+KEY_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-SECRET_KEY = os.path.join(KEY_DIR, os.environ.get("SECRET_KEY", ''))
-PUBLIC_KEY = os.path.join(KEY_DIR, os.environ.get("PUBLIC_KEY", ''))
+SECRET_KEY = os.path.join(KEY_DIR, os.environ.get("SECRET_KEY", ""))
+PUBLIC_KEY = os.path.join(KEY_DIR, os.environ.get("PUBLIC_KEY", ""))

@@ -1,4 +1,4 @@
-from marshmallow import Schema, fields, validates_schema, ValidationError
+from marshmallow import Schema, ValidationError, fields, validates_schema
 from marshmallow.validate import Length
 
 
@@ -18,7 +18,8 @@ class ChangeSchema(Schema):
         new_password = data.get("new_password")
         old_password = data.get("old_password")
         if (new_password is None and old_password is not None) or (
-                new_password is not None and old_password is None):
+            new_password is not None and old_password is None
+        ):
             raise ValidationError("errre")
 
 

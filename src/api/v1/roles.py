@@ -9,7 +9,8 @@ from werkzeug.exceptions import NotFound
 from src.core.logger import logger
 from src.models.permissions import RolesPermissions
 from src.models.roles import Role
-from src.schemas.roles_schemas import permission_schema, role_name_schema, role_schema
+from src.schemas.roles_schemas import (permission_schema, role_name_schema,
+                                       role_schema)
 from src.services.perm_service import RolePermissionService
 from src.services.permissions import auth_required
 from src.services.roles import RoleService
