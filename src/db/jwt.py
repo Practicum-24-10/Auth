@@ -5,7 +5,7 @@ from http import HTTPStatus
 from flask import Flask
 from flask_jwt_extended import JWTManager, get_jwt
 
-from src.core.config import SECRET_KEY, PUBLIC_KEY
+from src.core.config import PUBLIC_KEY, SECRET_KEY
 from src.services.redis_servis import redis_service
 
 jwt = JWTManager()
@@ -18,8 +18,8 @@ def check_if_token_is_revoked(request):
             jwt_payload = get_jwt()
             if not redis_service.check_all_data(jwt_payload, request):
                 return {
-                           "message": "Access denied. Token has been revoked."
-                       }, HTTPStatus.UNAUTHORIZED
+                    "message": "Access denied. Token has been revoked."
+                }, HTTPStatus.UNAUTHORIZED
             return func(*args, **kwargs)
 
         return inner
@@ -28,7 +28,7 @@ def check_if_token_is_revoked(request):
 
 
 def init_jwt(app: Flask):
-    app.config['JWT_ALGORITHM'] = 'RS256'
+    app.config["JWT_ALGORITHM"] = "RS256"
     app.config["JWT_PRIVATE_KEY"] = open(SECRET_KEY).read()
     app.config["JWT_PUBLIC_KEY"] = open(PUBLIC_KEY).read()
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)

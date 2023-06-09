@@ -2,30 +2,18 @@ from apispec import APISpec
 from apispec.ext.marshmallow import MarshmallowPlugin
 from apispec_webframeworks.flask import FlaskPlugin
 from flask_swagger_ui import get_swaggerui_blueprint
-from src.schemas.roles_schemas import (
-    PermissionIdSchema,
-    PermissionSchema,
-    RoleListSchema,
-    RoleNameSchema,
-    RoleIdSchema,
-    RoleSchema,
-    UsersIdSchema,
-    UsersRoleSchema,
-)
 
-from src.schemas.responses import (
-    SuccessResponseSchema,
-    ErrorResponseSchema,
-    SuccessTokenResponseSchema,
-    UserHistoryResponseSchema, PaginationSchema,
-)
-from src.schemas.users_schemas import (
-    SignupSchema,
-    LoginSchema,
-    LogoutSchema,
-    ChangeSchema,
-    RefreshSchema,
-)
+from src.schemas.oauth import SocialSchema
+from src.schemas.responses import (ErrorResponseSchema, PaginationSchema,
+                                   SuccessResponseSchema,
+                                   SuccessTokenResponseSchema,
+                                   UserHistoryResponseSchema)
+from src.schemas.roles_schemas import (PermissionIdSchema, PermissionSchema,
+                                       RoleIdSchema, RoleListSchema,
+                                       RoleNameSchema, RoleSchema,
+                                       UsersIdSchema, UsersRoleSchema)
+from src.schemas.users_schemas import (ChangeSchema, LoginSchema, LogoutSchema,
+                                       RefreshSchema, SignupSchema)
 
 
 def get_apispec(app):
@@ -62,13 +50,14 @@ def get_apispec(app):
     spec.components.security_scheme("RefreshToken", refresh_key_scheme)
 
     spec.components.schema("RoleNameSchema", schema=RoleNameSchema)
+    spec.components.schema("UsersRoleSchema", schema=UsersRoleSchema)
     spec.components.schema("RoleIdSchema", schema=RoleIdSchema)
     spec.components.schema("RoleSchema", schema=RoleSchema)
     spec.components.schema("RoleListSchema", schema=RoleListSchema)
     spec.components.schema("PermissionSchema", schema=PermissionSchema)
     spec.components.schema("PermissionIdSchema", schema=PermissionIdSchema)
     spec.components.schema("UsersIdSchema", schema=UsersIdSchema)
-
+    spec.components.schema("SocialSchema", schema=SocialSchema)
     create_tags(spec)
 
     load_docstrings(spec, app)
@@ -77,7 +66,10 @@ def get_apispec(app):
 
 
 def create_tags(spec):
-    tags = [{"name": "Auth", "description": "Сервис Аутификации"}]
+    tags = [
+        {"name": "Auth", "description": "Сервис Аутификации"},
+        {"name": "OAuth", "description": "Сервис Аутификации через соцсети"},
+    ]
 
     for tag in tags:
         spec.tag(tag)

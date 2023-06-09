@@ -15,6 +15,7 @@ class User(Mixin):
     )
     is_superuser = db.Column(db.BOOLEAN(), default=False)
     is_active = db.Column(db.BOOLEAN(), default=True)
+    social_accounts = db.relationship("SocialAccounts", back_populates="users")
 
     def __init__(
         self,

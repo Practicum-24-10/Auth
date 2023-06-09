@@ -4,7 +4,6 @@ from flask import Request
 
 from src.db.postgres_db import db
 from src.models.history import History
-from src.schemas.history_shema import HistorySchema
 
 
 class HistoryService:
@@ -21,7 +20,8 @@ class HistoryService:
     @classmethod
     def get_user_history_query(cls, user_id: UUID):
         user_history = History.query.filter_by(user_id=user_id).order_by(
-            History.login_time.desc())
+            History.login_time.desc()
+        )
         return user_history
 
     @classmethod

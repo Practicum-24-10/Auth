@@ -1,5 +1,6 @@
 from flask import Flask
 from flask_redis import FlaskRedis
+
 from src.core.config import config
 
 redis_client = FlaskRedis(decode_responses=True)
