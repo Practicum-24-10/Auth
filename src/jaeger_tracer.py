@@ -2,7 +2,8 @@ from functools import wraps
 
 from flask import request
 from opentelemetry import trace
-from opentelemetry.exporter.jaeger.thrift import JaegerExporter
+from opentelemetry.exporter.jaeger.thrift import (SERVICE_NAME, JaegerExporter,
+                                                  Resource)
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import (BatchSpanProcessor,
                                             ConsoleSpanExporter)
@@ -13,7 +14,9 @@ DEBUG = config.debug
 
 
 def configure_tracer() -> None:
-    trace.set_tracer_provider(TracerProvider())
+    resource = Resource(attributes={SERVICE_NAME: "auth-service"})
+    provider = TracerProvider(resource=resource)
+    trace.set_tracer_provider(provider)
     trace.get_tracer_provider().add_span_processor(
         BatchSpanProcessor(
             JaegerExporter(
@@ -22,7 +25,7 @@ def configure_tracer() -> None:
             )
         )
     )
-    # Чтобы видеть трейсы в консоли
+
     trace.get_tracer_provider().add_span_processor(
         BatchSpanProcessor(ConsoleSpanExporter())
     )
@@ -32,12 +35,16 @@ tracer = trace.get_tracer(__name__)
 
 
 if DEBUG:
+
     def jaeger_trace(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
             return f(*args, **kwargs)
+
         return wrapper
+
 else:
+
     def jaeger_trace(f):
         @wraps(f)
         def wrapper(*args, **kwargs):
