@@ -8,6 +8,7 @@ dotenv.load_dotenv()
 
 
 class AppSettings(BaseSettings):
+    service_name: str = "auth-service"
     db_name: str = "db_name"
     db_user: str = "db_user"
     db_password: str = "db_password"
@@ -17,6 +18,8 @@ class AppSettings(BaseSettings):
     redis_port: str = "6379"
     loglevel: str = "INFO"
     debug: bool = False
+    jaeger_agent_host_name: str = "jaeger"
+    jaeger_agent_port: int = 6831
 
 
 class TokensLife(BaseSettings):

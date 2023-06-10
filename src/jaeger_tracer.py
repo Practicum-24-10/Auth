@@ -14,14 +14,14 @@ DEBUG = config.debug
 
 
 def configure_tracer() -> None:
-    resource = Resource(attributes={SERVICE_NAME: "auth-service"})
+    resource = Resource(attributes={SERVICE_NAME: config.service_name})
     provider = TracerProvider(resource=resource)
     trace.set_tracer_provider(provider)
     trace.get_tracer_provider().add_span_processor(
         BatchSpanProcessor(
             JaegerExporter(
-                agent_host_name="jaeger",
-                agent_port=6831,
+                agent_host_name=config.jaeger_agent_host_name,
+                agent_port=config.jaeger_agent_port,
             )
         )
     )
