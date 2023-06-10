@@ -8,8 +8,8 @@ from src.models.mixin import Mixin
 
 class User(Mixin):
     __tablename__ = "users"
-    username = db.Column(db.String, unique=True, nullable=False)
-    password = db.Column(db.String, nullable=False)
+    username = db.Column(db.String(80), unique=True, nullable=False)
+    password = db.Column(db.String(120), nullable=False)
     roles = db.relationship(
         "Role", secondary="users_roles", overlaps="roles,users_relation"
     )

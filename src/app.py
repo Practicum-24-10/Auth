@@ -1,6 +1,7 @@
 import json
 import os
 import sys
+import uuid
 
 from flask import Flask, request
 
@@ -28,6 +29,7 @@ DEBUG = config.debug
 
 
 app = Flask(__name__)
+app.secret_key = str(uuid.uuid4())
 init_db(app)
 init_redis(app)
 init_jwt(app)

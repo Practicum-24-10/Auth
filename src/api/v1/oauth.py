@@ -13,7 +13,7 @@ oauth_api = Blueprint("oauth", __name__, url_prefix="/api/v1/oauth")
 
 
 @oauth_api.route("/<string:social>")
-def oauth(social: str):
+def oauth_func(social: str):
     """
     ---
     get:

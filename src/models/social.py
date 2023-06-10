@@ -7,9 +7,9 @@ from src.models.mixin import Mixin
 class SocialAccounts(Mixin):
     __tablename__ = "social_accounts"
 
-    social_id = db.Column(db.String, unique=True, nullable=False)
-    social_name = db.Column(db.String, nullable=False)
-    email = db.Column(db.String, nullable=True)
+    social_id = db.Column(db.String(200), unique=True, nullable=False)
+    social_name = db.Column(db.String(40), nullable=False)
+    email = db.Column(db.String(120), nullable=True)
     user_id = db.Column(db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     users = db.relationship("User", back_populates="social_accounts")
 

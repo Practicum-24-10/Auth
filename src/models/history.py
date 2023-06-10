@@ -40,10 +40,10 @@ class History(db.Model):
 
     user_id = db.Column(db.ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
     ip = db.Column(INET())
-    device_id = db.Column(db.String, default="")
-    user_agent = db.Column(db.String)
+    device_id = db.Column(db.String(120), default="")
+    user_agent = db.Column(db.String(300))
     login_time = db.Column(db.TIMESTAMP, nullable=False, default=datetime.now())
-    user_device_type = db.Column(db.String, primary_key=True)
+    user_device_type = db.Column(db.String(40), primary_key=True)
 
     def __init__(self, user_id, ip, user_agent):
         self.user_id = user_id
