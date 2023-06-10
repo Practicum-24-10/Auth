@@ -16,7 +16,7 @@ class RolesPermissions(db.Model):
 class Permission(Mixin):
     __tablename__ = "permissions"
 
-    permission = db.Column(db.String, unique=True, nullable=False)
+    permission = db.Column(db.String(80), unique=True, nullable=False)
     roles = db.relationship(
         "Role", secondary="roles_permissions", overlaps="permissions,roles_relation"
     )

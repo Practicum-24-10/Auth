@@ -16,7 +16,7 @@ class UsersRole(db.Model):
 class Role(Mixin):
     __tablename__ = "roles"
 
-    name = db.Column(db.String, unique=True, nullable=False)
+    name = db.Column(db.String(80), unique=True, nullable=False)
     users = db.relationship(
         "User", secondary="users_roles", overlaps="roles,users_relation"
     )
