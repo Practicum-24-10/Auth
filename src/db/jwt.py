@@ -5,7 +5,7 @@ from http import HTTPStatus
 from flask import Flask
 from flask_jwt_extended import JWTManager, get_jwt
 
-from src.core.config import PUBLIC_KEY, SECRET_KEY
+from src.core.config import PUBLIC_KEY, SECRET_KEY, token_life
 from src.services.redis_servis import redis_service
 
 jwt = JWTManager()
@@ -31,8 +31,8 @@ def init_jwt(app: Flask):
     app.config["JWT_ALGORITHM"] = "RS256"
     app.config["JWT_PRIVATE_KEY"] = open(SECRET_KEY).read()
     app.config["JWT_PUBLIC_KEY"] = open(PUBLIC_KEY).read()
-    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=1)
-    app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=30)
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = timedelta(hours=token_life.jwt_delta_access)
+    app.config["JWT_REFRESH_TOKEN_EXPIRES"] = timedelta(days=token_life.jwt_delta_refresh)
     app.config["JWT_BLACKLIST_ENABLED"] = True
     app.config["JWT_BLACKLIST_TOKEN_CHECKS"] = ["access", "refresh"]
     jwt.init_app(app)
