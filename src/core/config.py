@@ -23,10 +23,8 @@ class AppSettings(BaseSettings):
 
 
 class TokensLife(BaseSettings):
-    access: int = 100
-    refresh: int = 10000
-    delta_refresh: timedelta = timedelta(days=30)
-    delta_access: timedelta = timedelta(hours=1)
+    jwt_delta_refresh: int = 30
+    jwt_delta_access: int = 1
 
 
 class YandexClient(BaseSettings):
